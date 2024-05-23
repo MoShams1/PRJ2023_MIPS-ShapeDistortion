@@ -1,4 +1,6 @@
-/result/
-/stimulus/image/source/
+result/
+stimulus/image/source/
 *.pdf
 *.asv
+.idea/modules.xml
+.DS_Store
