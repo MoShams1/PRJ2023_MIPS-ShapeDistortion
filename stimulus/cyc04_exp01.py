@@ -123,8 +123,7 @@ motion_cycle_dur_frames = motion_cycle_dur_s * refresh_rate
 
 # response
 mouse_precision_coeff = 10
-# mouse = event.Mouse(win=win, visible=False)
-mouse = event.Mouse(win=win, visible=True)
+mouse = event.Mouse(win=win, visible=False)
 
 # turn off Numpy's FutureWarning
 warnings.simplefilter(action='ignore', category=FutureWarning)
