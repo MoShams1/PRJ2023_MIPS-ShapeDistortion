@@ -7,13 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae5b7da6-97f6-47ee-ad22-41170c0941e7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PRJ2023_MIPS-ShapeDistortion.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PRJ2023_MIPS-ShapeDistortion.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stimulus/cyc04_exp01.py" beforeDir="false" afterPath="$PROJECT_DIR$/stimulus/cyc04_exp01.py" afterDir="false" />
-    </list>
+    <list default="true" id="ae5b7da6-97f6-47ee-ad22-41170c0941e7" name="Changes" comment="deleted gitignore file" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,6 +72,34 @@
       <option name="presentableId" value="Default" />
       <updated>1716498588512</updated>
     </task>
+    <task id="LOCAL-00001" summary="verified cyc04 exp01 on Dell">
+      <created>1716505933057</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1716505933057</updated>
+    </task>
+    <task id="LOCAL-00002" summary="playing around with .idea files">
+      <created>1716506107964</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716506107964</updated>
+    </task>
+    <task id="LOCAL-00003" summary="deleted gitignore file">
+      <created>1716506227030</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1716506227030</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="verified cyc04 exp01 on Dell" />
+    <MESSAGE value="playing around with .idea files" />
+    <MESSAGE value="deleted gitignore file" />
+    <option name="LAST_COMMIT_MESSAGE" value="deleted gitignore file" />
   </component>
 </project>
