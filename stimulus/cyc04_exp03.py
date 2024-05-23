@@ -12,9 +12,11 @@ Task Procedure:
     Subject adjusts the horizontal component of the "T" to obtain symmetry
 
 ----------
-TWO stimuli:
-    Flash-Grab stimulus
-    Frame-Effect stimulus
+FOUR stimuli:
+    Flash-Grab stimulus + half-disc mask
+    Flash-Grab stimulus + frame mask
+    Frame-Effect stimulus + half-disc mask
+    Frame-Effect stimulus + frame mask
 
 TWO post-flash dirctions:
         -1: leftward post-flash motion
@@ -62,7 +64,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 subID = 'test'
 nrep = 5
-nstm = 2  # number of stimuli (FG, FE)
+nstm = 4  # number of stimuli (FG_maskFG, FG_maskFE, FE_maskFG, FE_maskFE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 1
@@ -77,7 +79,7 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp01_{subID}_{date}_{time}.json"
+output_file_name = f"exp03_{subID}_{date}_{time}.json"
 save_path = os.path.join("..", "data", "cyc04", output_file_name)
 image_path = os.path.join("image", "cyc04")
 
@@ -91,7 +93,7 @@ mon = sfc.config_mon_macair()
 # win = sfc.config_win(mon=mon, fullscr=full_screen)
 win = visual.Window(monitor=mon,
                     units='deg',
-                    size=[1440, 700],
+                    size=[2240, 900],
                     pos=[0, 0],
                     color=[0, 0, 0])
 sfc.test_refresh_rate(win, refresh_rate)
@@ -102,14 +104,24 @@ FIX_X = 0
 FIX_Y = 0
 
 # FG
-FG_size = 10  # [dva]
+FG_size = 50  # [dva]
 FG_x = FIX_X
 FG_y = FIX_Y
 
 # FE
-FE_size = 10  # [dva]
+FE_size = 50  # [dva]
 FE_x = FIX_X
 FE_y = FIX_Y + .5
+
+# maskFG
+maskFG_size = 50  # [dva]
+maskFG_x = FIX_X
+maskFG_y = FIX_Y
+
+# maskFE
+maskFE_size = 50  # [dva]
+maskFE_x = FIX_X
+maskFE_y = FIX_Y + .5
 
 # probe
 bar_size = 2.4  # [dva]
@@ -133,9 +145,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 10)
+stm_array = np.repeat(['FG_maskFG', 'FG_maskFE', 'FE_maskFG', 'FE_maskFE'], 10)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 5), 2)
+dir_array = np.tile(np.repeat([-1, 1], 5), 4)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
@@ -152,15 +164,25 @@ pause_array = pause_array[:-1]
 # /// VISUAL OBJECTS ///
 
 # FG
-FG_directory = os.path.join(image_path, 'FG.png')
+FG_directory = os.path.join(image_path, 'largeFG.png')
 FG = visual.ImageStim(win,
                       image=FG_directory,
                       size=FG_size)
 # FE
-FE_directory = os.path.join(image_path, 'FE.png')
+FE_directory = os.path.join(image_path, 'largeFE.png')
 FE = visual.ImageStim(win,
                       image=FE_directory,
                       size=FE_size)
+# maskFG
+maskFG_directory = os.path.join(image_path, 'maskFG.png')
+maskFG = visual.ImageStim(win,
+                          image=maskFG_directory,
+                          size=maskFG_size)
+# maskFE
+maskFE_directory = os.path.join(image_path, 'maskFE.png')
+maskFE = visual.ImageStim(win,
+                          image=maskFE_directory,
+                          size=maskFE_size)
 # probe
 bar_h_directory = os.path.join(image_path, 'bar_h.png')
 bar_h = visual.ImageStim(win,
@@ -180,7 +202,7 @@ fixdot = visual.Circle(win,
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///
 
-for itrial in range(ntrs):
+for itrial in range(1):
 
     print('---------------------------')
     print(f'trl: {itrial + 1}')
@@ -204,12 +226,12 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// create motion arrays
 
-    if stm_array[itrial] == 'FG':
+    if (stm_array[itrial] == 'FG_maskFG') or (stm_array == 'FG_maskFE'):
         motion_pos1 = 0
         motion_pos2 = dir_array[itrial] * 90
-    elif stm_array[itrial] == 'FE':
-        motion_pos1 = -dir_array[itrial] * 3.9
-        motion_pos2 = dir_array[itrial] * 3.9
+    elif (stm_array[itrial] == 'FE_maskFG') or (stm_array == 'FE_maskFE'):
+        motion_pos1 = -dir_array[itrial] * 3.9  # [dva]
+        motion_pos2 = dir_array[itrial] * 3.9  # [dva]
     else:
         continue
 
@@ -227,88 +249,91 @@ for itrial in range(ntrs):
 
     # ----------------
     # TEST
-    # for i in range(int(refresh_rate)):
-    #     FE.pos = motion_array[0], FE_y
-    #     FE.draw()
-    #     bar_v.draw()
-    #     bar_h.pos = FIX_X, bar_h_y
-    #     bar_h.draw()
+    # for i in range(int(refresh_rate * 4)):
+    #     # FE.pos = motion_array[0], FE_y
+    #     # FE.draw()
+    #     FG.ori = motion_array[0]
+    #     FG.draw()
+    #     maskFE.draw()
+    #     # bar_v.draw()
+    #     # bar_h.pos = FIX_X, bar_h_y
+    #     # bar_h.draw()
     #     fixdot.draw()
     #     win.flip()
     # ----------------
-
-    # opening message
-    if itrial in pause_array:
-        sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
-
-    # gap period
-    for igap in range(int(refresh_rate / 2), int(refresh_rate) + 1, 1):
-        win.flip()
-
-    # motion period
-    loop_flag = True
-    while loop_flag:
-        loop_cntr += 1
-        for imotion in motion_array:
-
-            # transfer mouse position to horizontal bar position
-            bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
-                      bar_h_x_offset
-
-            # limit horizontal bar's motion range
-            if bar_h_x < -bar_h_x_limit:
-                bar_h_x = -bar_h_x_limit
-            if bar_h_x > bar_h_x_limit:
-                bar_h_x = bar_h_x_limit
-
-            if stm_array[itrial] == 'FG':
-                FG.ori = imotion
-                FG.draw()
-            elif stm_array[itrial] == 'FE':
-                FE.pos = imotion, FE_y
-                FE.draw()
-            else:
-                continue
-
-            if imotion == motion_pos1 and loop_cntr > 1:
-                bar_v.draw()
-                bar_h.pos = bar_h_x, bar_h_y
-                bar_h.draw()
-
-            fixdot.draw()
-            win.flip()
-
-            # exit loop upon request
-            pressed_key = event.getKeys(keyList=['space', 'escape'])
-            if 'escape' in pressed_key:
-                core.quit()
-            if 'space' in pressed_key:
-                loop_flag = False
-                break
-
-    print(f'PSE_dva: {np.round(bar_h_x, 2)}')
-    print(f'PSE_normalized: {np.round(bar_h_x / bar_h_x_limit, 2)}')
-
-    # --------------------------------
-    # /// save
-
-    # create a dictionary of variables to be saved
-    trial_dict = {'trial_number': itrial + 1,
-                  'stimulus_type': stm_array[itrial],
-                  'postflash_direction': dir_array[itrial],
-                  'pse_dva': np.round(bar_h_x, 2),
-                  'pse_normallized': np.round(bar_h_x / bar_h_x_limit, 2),
-                  'loop_count': loop_cntr}
-
-    dfnew = pd.DataFrame(trial_dict, index=[0])
-
-    if itrial > 0:
-        df = pd.read_json(save_path)
-        dfnew = pd.concat([df, dfnew], ignore_index=True)
-    dfnew.to_json(save_path)
-
-    if itrial == ntrs - 1:
-        sfc.end_screen(win)
+    #
+    # # opening message
+    # if itrial in pause_array:
+    #     sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
+    #
+    # # gap period
+    # for igap in range(int(refresh_rate / 2), int(refresh_rate) + 1, 1):
+    #     win.flip()
+    #
+    # # motion period
+    # loop_flag = True
+    # while loop_flag:
+    #     loop_cntr += 1
+    #     for imotion in motion_array:
+    #
+    #         # transfer mouse position to horizontal bar position
+    #         bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
+    #                   bar_h_x_offset
+    #
+    #         # limit horizontal bar's motion range
+    #         if bar_h_x < -bar_h_x_limit:
+    #             bar_h_x = -bar_h_x_limit
+    #         if bar_h_x > bar_h_x_limit:
+    #             bar_h_x = bar_h_x_limit
+    #
+    #         if stm_array[itrial] == 'FG':
+    #             FG.ori = imotion
+    #             FG.draw()
+    #         elif stm_array[itrial] == 'FE':
+    #             FE.pos = imotion, FE_y
+    #             FE.draw()
+    #         else:
+    #             continue
+    #
+    #         if imotion == motion_pos1 and loop_cntr > 1:
+    #             bar_v.draw()
+    #             bar_h.pos = bar_h_x, bar_h_y
+    #             bar_h.draw()
+    #
+    #         fixdot.draw()
+    #         win.flip()
+    #
+    #         # exit loop upon request
+    #         pressed_key = event.getKeys(keyList=['space', 'escape'])
+    #         if 'escape' in pressed_key:
+    #             core.quit()
+    #         if 'space' in pressed_key:
+    #             loop_flag = False
+    #             break
+    #
+    # print(f'PSE_dva: {np.round(bar_h_x, 2)}')
+    # print(f'PSE_normalized: {np.round(bar_h_x / bar_h_x_limit, 2)}')
+    #
+    # # --------------------------------
+    # # /// save
+    #
+    # # create a dictionary of variables to be saved
+    # trial_dict = {'trial_number': itrial + 1,
+    #               'stimulus_type': stm_array[itrial],
+    #               'postflash_direction': dir_array[itrial],
+    #               'pse_dva': np.round(bar_h_x, 2),
+    #               'pse_normallized': np.round(bar_h_x / bar_h_x_limit, 2),
+    #               'loop_count': loop_cntr}
+    #
+    # dfnew = pd.DataFrame(trial_dict, index=[0])
+    #
+    # if itrial > 0:
+    #     df = pd.read_json(save_path)
+    #     dfnew = pd.concat([df, dfnew], ignore_index=True)
+    # dfnew.to_json(save_path)
+    #
+    # if itrial == ntrs - 1:
+    #     sfc.end_screen(win)
 
 # --------------------------------
 win.close()

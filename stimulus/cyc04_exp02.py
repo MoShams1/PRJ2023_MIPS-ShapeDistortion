@@ -14,13 +14,13 @@ Task Procedure:
 ----------
 TWO stimuli:
     Flash-Grab stimulus
-    FE-Effect stimulus
+    Frame-Effect stimulus
 
 TWO post-flash dirctions:
         -1: leftward post-flash motion
         +1: rightward post-flash motion
 
-Five probe locations
+Three probe locations
 
 Five repetitions per stimulus
 
@@ -80,7 +80,7 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp01_{subID}_{date}_{time}.json"
+output_file_name = f"exp02_{subID}_{date}_{time}.json"
 save_path = os.path.join("..", "data", "cyc04", output_file_name)
 image_path = os.path.join("image", "cyc04")
 
