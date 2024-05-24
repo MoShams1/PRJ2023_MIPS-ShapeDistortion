@@ -25,6 +25,7 @@ FIVE repetitions per stimulus
 """
 
 import os
+import random
 import warnings
 import numpy as np
 import pandas as pd
@@ -77,7 +78,7 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp01_{subID}_{date}_{time}.json"
+output_file_name = f"exp02_{subID}_{date}_{time}.json"
 save_path = os.path.join("..", "data", "cyc04", output_file_name)
 image_path = os.path.join("image", "cyc04")
 
@@ -201,7 +202,7 @@ for itrial in range(ntrs):
                                                 0.1))
 
     # --------------------------------
-    # /// create motion arrays
+    # create motion arrays
 
     if stm_array[itrial] == 'FG':
         motion_pos1 = FG_pos1
@@ -232,7 +233,9 @@ for itrial in range(ntrs):
         sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
 
     # gap period
-    for igap in range(int(refresh_rate / 2), int(refresh_rate) + 1, 1):
+    for igap in range(int(refresh_rate/2),
+                      random.choice(range(int(refresh_rate/2),
+                                          int(refresh_rate)+1))):
         win.flip()
 
     # motion period
@@ -300,15 +303,15 @@ for itrial in range(ntrs):
     if itrial == ntrs - 1:
         sfc.end_screen(win)
 
-    # --------------------------------
-    # /// report
-    print('===========================')
-    print(
-        f'flash {probe_duration_frames} '
-        f'+ motion {len(motion_array_base)-2} '
-        f'+ pause {probe_duration_frames} '
-        f'+ motion {len(motion_array_base)-2} [frames]'
-    )
-    print('===========================')
+# --------------------------------
+# /// report
+print('===========================')
+print(
+    f'flash {probe_duration_frames} '
+    f'+ motion {len(motion_array_base)-2} '
+    f'+ pause {probe_duration_frames} '
+    f'+ motion {len(motion_array_base)-2} [frames]'
+)
+print('===========================')
 
 win.close()

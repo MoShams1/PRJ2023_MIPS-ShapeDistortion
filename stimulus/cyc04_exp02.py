@@ -27,11 +27,12 @@ Five repetitions per stimulus
 """
 
 import os
+import random
 import warnings
 import numpy as np
 import pandas as pd
-from lib import stim_flow_control as sfc
 from psychopy import event, visual, core
+from lib import stim_flow_control as sfc
 
 
 def deg2rad(angle):
@@ -62,7 +63,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'test'
+subID = 'MS_test'
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
@@ -88,42 +89,41 @@ image_path = os.path.join("image", "cyc04")
 # /// set stimulus parameters
 
 # monitor and window
-refresh_rate = 120  # [frames/s]
-# mon = sfc.config_mon_dell()
-mon = sfc.config_mon_macair()
-# win = sfc.config_win(mon=mon, fullscr=full_screen)
-win = visual.Window(monitor=mon,
-                    units='deg',
-                    size=[1440, 700],
-                    pos=[0, 0],
-                    color=[0, 0, 0])
+refresh_rate = 60  # [frames/s]
+mon = sfc.config_mon_dell()
+win = sfc.config_win(mon=mon, fullscr=full_screen)
 sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
 fixdot_radius = .25  # [dva]
-FIX_X = 0
-FIX_Y = 0
+FIX_X = 0  # [dva]
+FIX_Y = 0  # [dva]
 
 # FG
 FG_size = 10  # [dva]
-FG_x = FIX_X
-FG_y = FIX_Y
+FG_x = 0  # [dva]
+FG_y = 0  # [dva]
+FG_pos1 = 0  # [degrees of arc]
+FG_pos2 = 90  # [degrees of arc]
 
 # FE
 FE_size = 10  # [dva]
-FE_x = FIX_X
-FE_y = FIX_Y + .5
+FE_x = 0  # [dva]
+FE_y = .5  # [dva]
+FE_pos1 = -3.9  # [dva]
+FE_pos2 = 3.9  # [dva]
 
 # probe
 probe_radius = .25  # [dva]
-probe_y = FIX_Y + 4.82  # [dva]
-probe_duration = 4  # [frames]
+probe_y = 4.82  # [dva]
+probe_duration_frames = 3  # [frames]
 
 # motion
-motion_cycle_dur = refresh_rate
+motion_cycle_dur_s = .8
+motion_cycle_dur_frames = motion_cycle_dur_s * refresh_rate
 
 # response
-mouse_precision_coeff = 20
+mouse_precision_coeff = 10
 mouse = event.Mouse(win=win, visible=False)
 
 # turn off Numpy's FutureWarning
@@ -187,58 +187,52 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// reset variables
     mouse.setPos((0, 0))
+    mouse.setVisible(False)
     bar_h_x = np.nan
-    loop_cntr = 0
 
     # --------------------------------
     # /// set up the stimulus behavior in current trial
 
-    # add random offset to horizontal bar's onset position
-    # bar_h_x_offset = np.random.choice(np.arange(-bar_h_x_limit,
-    #                                             bar_h_x_limit,
-    #                                             0.1))
-
-    # --------------------------------
-    # /// create motion arrays
+    # create motion arrays
 
     if stm_array[itrial] == 'FG':
-        motion_pos1 = 0
-        motion_pos2 = dir_array[itrial] * 90
+        motion_pos1 = FG_pos1
+        motion_pos2 = dir_array[itrial] * FG_pos2
     elif stm_array[itrial] == 'FE':
-        motion_pos1 = -dir_array[itrial] * FE_size / 2.55
-        motion_pos2 = dir_array[itrial] * FE_size / 2.55
+        motion_pos1 = dir_array[itrial] * FE_pos1
+        motion_pos2 = dir_array[itrial] * FE_pos2
     else:
         continue
 
     motion_array_base = np.linspace(motion_pos1, motion_pos2,
-                                    num=int(refresh_rate / 2))
+                                    num=int(motion_cycle_dur_frames / 2) + 2)
     motion_array_rev = np.flip(motion_array_base)
     motion_array = np.concatenate(
-        [motion_array_base[:-1],
-         np.repeat(motion_array_base[-1], probe_duration),
-         motion_array_rev[:-1],
-         np.repeat(motion_array_rev[-1], probe_duration)])
+        [
+            np.repeat(motion_array_base[0], probe_duration_frames),
+            motion_array_base[1:-1],
+            np.repeat(motion_array_rev[0], probe_duration_frames),
+            motion_array_rev[1:-1],
+        ]
+    )
 
     # --------------------------------
     # /// run stimulus
 
-    # ----------------
-    # TEST
-    # for i in range(int(refresh_rate * 2)):
-    #     FG.ori = 0
-    #     FG.draw()
-    #     probe.pos = probe_x_array[0], probe_y
-    #     probe.draw()
-    #     fixdot.draw()
-    #     win.flip()
-    # ----------------
-
     # opening message
     if itrial in pause_array:
-        sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
+        sfc.block_msg(win, np.where(pause_array == itrial)[0][0]+1, nblocks)
 
-    # gap period
-    for igap in range(int(refresh_rate / 2), int(refresh_rate) + 1, 1):
+    for igap in range(int(refresh_rate/2)+1):
+        win.flip()
+
+    for ifix in range(int(refresh_rate)):
+        fixdot.draw()
+        win.flip()
+
+    for igap in range(int(refresh_rate/2),
+                      random.choice(range(int(refresh_rate/2),
+                                          int(refresh_rate)+1))):
         win.flip()
 
     # motion period
@@ -258,25 +252,23 @@ for itrial in range(ntrs):
                 probe.pos = probe_x_array[itrial], probe_y
                 probe.draw()
 
-            fixdot.draw()
             win.flip()
 
             # exit loop upon request
-            pressed_key = event.getKeys(keyList=['space', 'escape'])
+            pressed_key = event.getKeys(keyList=['escape'])
             if 'escape' in pressed_key:
                 core.quit()
-            if 'space' in pressed_key:
-                loop_flag = False
                 break
 
     mouse = event.Mouse(visible=True,
-                        newPos=[0, 0])
+                        newPos=[random.choice(range(-3, 3)),
+                                random.choice(range(-3, 3))])
     while not mouse.getPressed()[0]:
         win.flip()
     while mouse.getPressed()[0]:
         pass
     click_loc = mouse.getPos()
-    print(click_loc)
+    print(f'click location: {click_loc}')
 
     # --------------------------------
     # /// save
@@ -292,12 +284,23 @@ for itrial in range(ntrs):
 
     dfnew = pd.DataFrame(trial_dict, index=[0])
 
-    # if itrial > 0:
-    #     df = pd.read_json(save_path)
-    #     dfnew = pd.concat([df, dfnew], ignore_index=True)
-    # dfnew.to_json(save_path)
-    #
-    # if itrial == ntrs - 1:
-    #     sfc.end_screen(win)
-    # --------------------------------
+    if itrial > 0:
+        df = pd.read_json(save_path)
+        dfnew = pd.concat([df, dfnew], ignore_index=True)
+    dfnew.to_json(save_path)
+
+    if itrial == ntrs - 1:
+        sfc.end_screen(win)
+
+# --------------------------------
+# /// report
+print('===========================')
+print(
+    f'flash {probe_duration_frames} '
+    f'+ motion {len(motion_array_base) - 2} '
+    f'+ pause {probe_duration_frames} '
+    f'+ motion {len(motion_array_base) - 2} [frames]'
+)
+print('===========================')
+
 win.close()
