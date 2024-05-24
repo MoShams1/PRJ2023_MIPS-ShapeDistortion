@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 03)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024
@@ -27,6 +27,7 @@ FIVE repetitions per stimulus
 """
 
 import os
+import random
 import warnings
 import numpy as np
 import pandas as pd
@@ -69,8 +70,8 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 1
 
-if subID == 'test':
-    full_screen = True
+if subID == 'ttest':
+    full_screen = False
 else:
     full_screen = True
 # ----------------------------------------------------------------------------
@@ -87,49 +88,55 @@ image_path = os.path.join("image", "cyc04")
 # /// set stimulus parameters
 
 # monitor and window
-refresh_rate = 120  # [frames/s]
-mon = sfc.config_mon_imac24()
+refresh_rate = 60  # [frames/s]
+mon = sfc.config_mon_dell()
 win = sfc.config_win(mon=mon, fullscr=full_screen)
 sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
 fixdot_radius = .25  # [dva]
-FIX_X = 0
-FIX_Y = 0
+FIX_X = 0  # [dva]
+FIX_Y = 0  # [dva]
 
+sz = 42
 # FG
-FG_size = 50  # [dva]
-FG_x = FIX_X
-FG_y = FIX_Y
+FG_size = sz  # [dva]
+FG_x = 0  # [dva]
+FG_y = 0  # [dva]
+FG_pos1 = 0  # [degrees of arc]
+FG_pos2 = 90  # [degrees of arc]
 
 # FE
-FE_size = 50  # [dva]
-FE_x = FIX_X
-FE_y = FIX_Y + .5
+FE_size = sz  # [dva]
+FE_x = 0  # [dva]
+FE_y = 0  # [dva]
+FE_pos1 = -3.9  # [dva]
+FE_pos2 = 3.9  # [dva]
 
 # maskFG
-maskFG_size = 50  # [dva]
-maskFG_x = FIX_X
-maskFG_y = FIX_Y
+maskFG_size = sz  # [dva]
+maskFG_x = 0  # [dva]
+maskFG_y = 0  # [dva]
 
 # maskFE
-maskFE_size = 50  # [dva]
-maskFE_x = FIX_X
-maskFE_y = FIX_Y + .5
+maskFE_size = sz  # [dva]
+maskFE_x = 0  # [dva]
+maskFE_y = 0  # [dva]
 
 # probe
 bar_size = 2.4  # [dva]
-bar_h_y = FIX_Y + 4.2  # [dva]
-bar_v_x = FIX_X
-bar_v_y = FIX_Y + 4.2  # [dva]
-bar_h_x_limit = bar_size / 2.52
-probe_duration = 2  # [frames]
+bar_h_y = 4.2  # [dva]
+bar_v_x = 0  # [dva]
+bar_v_y = 4.2  # [dva]
+bar_h_x_limit = .95  # [dva]
+probe_duration_frames = 3  # [frames]
 
 # motion
-motion_cycle_dur = refresh_rate
+motion_cycle_dur_s = .8
+motion_cycle_dur_frames = motion_cycle_dur_s * refresh_rate
 
 # response
-mouse_precision_coeff = 20
+mouse_precision_coeff = 10
 mouse = event.Mouse(win=win, visible=False)
 
 # turn off Numpy's FutureWarning
@@ -191,7 +198,7 @@ bar_v = visual.ImageStim(win,
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
                        pos=(FIX_X, FIX_Y),
-                       fillColor='black')
+                       fillColor='green')
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///
@@ -218,52 +225,42 @@ for itrial in range(ntrs):
                                                 0.1))
 
     # --------------------------------
-    # /// create motion arrays
+    # create motion arrays
 
     if (stm_array[itrial] == 'FG_maskFG') or\
             (stm_array[itrial] == 'FG_maskFE'):
-        motion_pos1 = 0
-        motion_pos2 = dir_array[itrial] * 90
+        motion_pos1 = FG_pos1
+        motion_pos2 = dir_array[itrial] * FG_pos2
     elif (stm_array[itrial] == 'FE_maskFG') or\
             (stm_array[itrial] == 'FE_maskFE'):
-        motion_pos1 = -dir_array[itrial] * 3.9  # [dva]
-        motion_pos2 = dir_array[itrial] * 3.9  # [dva]
+        motion_pos1 = dir_array[itrial] * FE_pos1
+        motion_pos2 = dir_array[itrial] * FE_pos2
     else:
         continue
 
     motion_array_base = np.linspace(motion_pos1, motion_pos2,
-                                    num=int(refresh_rate / 2))
+                                    num=int(motion_cycle_dur_frames / 2) + 2)
     motion_array_rev = np.flip(motion_array_base)
     motion_array = np.concatenate(
-        [motion_array_base[:-1],
-         np.repeat(motion_array_base[-1], probe_duration),
-         motion_array_rev[:-1],
-         np.repeat(motion_array_rev[-1], probe_duration)])
+        [
+            np.repeat(motion_array_base[0], probe_duration_frames),
+            motion_array_base[1:-1],
+            np.repeat(motion_array_rev[0], probe_duration_frames),
+            motion_array_rev[1:-1],
+        ]
+    )
 
     # --------------------------------
     # /// run stimulus
-
-    # ----------------
-    # TEST
-    # for i in range(int(refresh_rate * 4)):
-    #     # FE.pos = motion_array[0], FE_y
-    #     # FE.draw()
-    #     FG.ori = motion_array[0]
-    #     FG.draw()
-    #     maskFE.draw()
-    #     # bar_v.draw()
-    #     # bar_h.pos = FIX_X, bar_h_y
-    #     # bar_h.draw()
-    #     fixdot.draw()
-    #     win.flip()
-    # ----------------
 
     # opening message
     if itrial in pause_array:
         sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
 
     # gap period
-    for igap in range(int(refresh_rate / 2), int(refresh_rate) + 1, 1):
+    for igap in range(int(refresh_rate/2),
+                      random.choice(range(int(refresh_rate/2),
+                                          int(refresh_rate)+1))):
         win.flip()
 
     # motion period
@@ -339,4 +336,14 @@ for itrial in range(ntrs):
         sfc.end_screen(win)
 
 # --------------------------------
+# /// report
+print('===========================')
+print(
+    f'flash {probe_duration_frames} '
+    f'+ motion {len(motion_array_base)-2} '
+    f'+ pause {probe_duration_frames} '
+    f'+ motion {len(motion_array_base)-2} [frames]'
+)
+print('===========================')
+
 win.close()

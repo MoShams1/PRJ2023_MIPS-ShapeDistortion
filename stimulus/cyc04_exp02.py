@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 02)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024
@@ -109,7 +109,7 @@ FG_pos2 = 90  # [degrees of arc]
 # FE
 FE_size = 10  # [dva]
 FE_x = 0  # [dva]
-FE_y = .5  # [dva]
+FE_y = 0  # [dva]
 FE_pos1 = -3.9  # [dva]
 FE_pos2 = 3.9  # [dva]
 
@@ -172,7 +172,7 @@ probe = visual.Circle(win,
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
                        pos=(FIX_X, FIX_Y),
-                       fillColor='black')
+                       fillColor='green')
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///

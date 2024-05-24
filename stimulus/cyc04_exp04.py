@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 04)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024

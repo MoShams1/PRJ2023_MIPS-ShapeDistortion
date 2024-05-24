@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 01)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024
@@ -106,7 +106,7 @@ FG_pos2 = 90  # [degrees of arc]
 # FE
 FE_size = 10  # [dva]
 FE_x = 0  # [dva]
-FE_y = .5  # [dva]
+FE_y = 0  # [dva]
 FE_pos1 = -3.9  # [dva]
 FE_pos2 = 3.9  # [dva]
 
@@ -257,11 +257,9 @@ for itrial in range(ntrs):
             if stm_array[itrial] == 'FG':
                 FG.ori = imotion
                 FG.draw()
-            elif stm_array[itrial] == 'FE':
+            if stm_array[itrial] == 'FE':
                 FE.pos = imotion, FE_y
                 FE.draw()
-            else:
-                continue
 
             if imotion == motion_pos1 and loop_cntr > 1:
                 bar_v.draw()
