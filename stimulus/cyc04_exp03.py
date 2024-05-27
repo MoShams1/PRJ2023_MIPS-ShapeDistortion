@@ -98,28 +98,27 @@ fixdot_radius = .25  # [dva]
 FIX_X = 0  # [dva]
 FIX_Y = 0  # [dva]
 
-sz = 42
 # FG
-FG_size = sz  # [dva]
+FG_size = 16  # [dva]
 FG_x = 0  # [dva]
 FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
 # FE
-FE_size = sz  # [dva]
+FE_size = 42  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
 FE_pos1 = -3.9  # [dva]
 FE_pos2 = 3.9  # [dva]
 
 # maskFG
-maskFG_size = sz  # [dva]
+maskFG_size = 42  # [dva]
 maskFG_x = 0  # [dva]
 maskFG_y = 0  # [dva]
 
 # maskFE
-maskFE_size = sz  # [dva]
+maskFE_size = 42  # [dva]
 maskFE_x = 0  # [dva]
 maskFE_y = 0  # [dva]
 
