@@ -63,7 +63,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'AI'
+subID = 'MS'
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
@@ -230,9 +230,8 @@ for itrial in range(ntrs):
         fixdot.draw()
         win.flip()
 
-    for igap in range(int(refresh_rate/2),
-                      random.choice(range(int(refresh_rate/2),
-                                          int(refresh_rate)+1))):
+    for igap in range(int(refresh_rate/2) +
+                      random.choice(range(int(refresh_rate/2)))):
         win.flip()
 
     # motion period

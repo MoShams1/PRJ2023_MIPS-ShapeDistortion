@@ -63,7 +63,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'AI'
+subID = 'MS'
 nrep = 5
 nstm = 4  # number of stimuli (FG_maskFG, FG_maskFE, FE_maskFG, FE_maskFE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
@@ -258,9 +258,8 @@ for itrial in range(ntrs):
         sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
 
     # gap period
-    for igap in range(int(refresh_rate/2),
-                      random.choice(range(int(refresh_rate/2),
-                                          int(refresh_rate)+1))):
+    for igap in range(int(refresh_rate/2) +
+                      random.choice(range(int(refresh_rate/2)))):
         win.flip()
 
     # motion period
