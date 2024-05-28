@@ -25,6 +25,8 @@ click_x = cell2mat(struct2cell(jsonData.click_x));
 probe_x = cell2mat(struct2cell(jsonData.probe_x));
 click_err = click_x - probe_x;
 
+%% prepare data
+
 click_err(dir<0) = -click_err(dir<0);
 probe_lead = probe_x;
 probe_lead(dir<0) = -probe_lead(dir<0);

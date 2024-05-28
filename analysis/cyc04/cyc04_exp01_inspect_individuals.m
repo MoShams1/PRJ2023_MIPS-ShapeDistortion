@@ -23,28 +23,34 @@ clear jsonFilePath jsonContent fileID
 typ = struct2cell(jsonData.stimulus_type);
 dir = cell2mat(struct2cell(jsonData.postflash_direction));
 pse_dva = cell2mat(struct2cell(jsonData.pse_dva));
-pse_nrm = cell2mat(struct2cell(jsonData.pse_normalized));
 loop_cnt = cell2mat(struct2cell(jsonData.loop_count));
 
+%% prepare data
+
 pse_dva(dir<0) = -pse_dva(dir<0);
-pse_nrm(dir<0) = -pse_nrm(dir<0);
 
-pse_dva_FG = pse_dva(strcmp(typ, 'FG'));
-pse_dva_FE = pse_dva(strcmp(typ, 'FE'));
-
-pse_nrm_FG = pse_nrm(strcmp(typ, 'FG'));
-pse_nrm_FE = pse_nrm(strcmp(typ, 'FE'));
+pse_dva_FG_neg = pse_dva(strcmp(typ, 'FG') & dir<0);
+pse_dva_FG_pos = pse_dva(strcmp(typ, 'FG') & dir>0);
+pse_dva_FE_neg = pse_dva(strcmp(typ, 'FE') & dir<0);
+pse_dva_FE_pos = pse_dva(strcmp(typ, 'FE') & dir>0);
 
 %% plot
 
-x_labels = {'FG','FE'};
-% data_cell = {pse_nrm_FG, pse_nrm_FE};
-data_cell = {pse_dva_FG, pse_dva_FE};
+x_labels = {'FG-leftDir','FG-rightDir','FE-leftDir','FE-rightDir'};
+data_cell = {
+    pse_dva_FG_neg, ...
+    pse_dva_FG_pos, ...
+    pse_dva_FE_neg, ...
+    pse_dva_FE_pos, ...
+    };
 
-figure('units','inches','outerposition',[1 1 4 4])
+figure('units','inches','outerposition',[1 1 5 4])
 scatterbar(data_cell, 200)
 yline(0)
-cleanplot
 
-xticks(1:2)
+xticks(1:4)
 xticklabels(x_labels)
+
+ylabel({'PSE (dva)', 'in direction of motion'})
+
+cleanplot
