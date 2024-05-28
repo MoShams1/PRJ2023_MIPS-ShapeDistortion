@@ -4,7 +4,9 @@ close all
 
 % Specify the path to the JSON file
 % jsonFilePath = '../../data/cyc04/exp02_AI_20240527_115842.json';
-jsonFilePath = '../../data/cyc04/exp02_MS_20240527_131347.json';
+% jsonFilePath = '../../data/cyc04/exp02_MS_20240527_131347.json';
+jsonFilePath = '../../data/cyc04/exp02_AM_20240528_110852.json';
+
 
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);

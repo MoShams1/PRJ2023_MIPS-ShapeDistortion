@@ -61,7 +61,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'AM'
+subID = 'AM_test'
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
@@ -86,7 +86,7 @@ image_path = os.path.join("image", "cyc04")
 # /// set stimulus parameters
 
 # monitor and window
-refresh_rate = 60  # [frames/s]
+refresh_rate = 120  # [frames/s]
 mon = sfc.config_mon_dell()
 win = sfc.config_win(mon=mon, fullscr=full_screen)
 sfc.test_refresh_rate(win, refresh_rate)
@@ -116,7 +116,7 @@ bar_h_y = 4.2  # [dva]
 bar_v_x = 0  # [dva]
 bar_v_y = 4.2  # [dva]
 bar_h_x_limit = .95  # [dva]
-probe_duration_frames = 3  # [frames]
+probe_duration_frames = 6  # [frames]
 
 # motion
 motion_cycle_dur_s = .8
