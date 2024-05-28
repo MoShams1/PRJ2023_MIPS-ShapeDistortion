@@ -287,7 +287,7 @@ for itrial in range(ntrs):
                   'stimulus_type': stm_array[itrial],
                   'postflash_direction': dir_array[itrial],
                   'pse_dva': np.round(bar_h_x, 2),
-                  'pse_normallized': np.round(bar_h_x / bar_h_x_limit, 2),
+                  'pse_normalized': np.round(bar_h_x / bar_h_x_limit, 2),
                   'loop_count': loop_cntr}
 
     dfnew = pd.DataFrame(trial_dict, index=[0])
