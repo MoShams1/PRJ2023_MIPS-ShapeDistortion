@@ -59,7 +59,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'NS'
+subID = 'ER'
 nrep = 5
 nfix = 2  # number of fixation locations
 ndir = 2  # number of direction of motions (flash-left, flash-right)
