@@ -81,7 +81,7 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp02_{subID}_{date}_{time}.json"
+output_file_name = f"exp02_v2_{subID}_{date}_{time}.json"
 save_path = os.path.join("..", "data", "cyc04", output_file_name)
 image_path = os.path.join("image", "cyc04")
 
