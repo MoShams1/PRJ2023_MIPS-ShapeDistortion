@@ -2,9 +2,12 @@ clc
 clear
 close all
 
-% Specify the path to the JSON file
-% jsonFilePath = '../../data/cyc04/exp02_AI_20240527_115842.json';
-jsonFilePath = '../../data/cyc04/exp02_MS_20240527_131347.json';
+isubj = 13;
+
+all_files = dir('../../data/cyc04/*exp02*');
+jsonFilePath = fullfile( ...
+    all_files(isubj).folder, ...
+    all_files(isubj).name);
 
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);
@@ -99,8 +102,11 @@ e_FE = SE(click_err_FE);
 errorbar(x,y_FE,e_FE,'linewidth',2);
 
 yline(0)
-cleanplot
 
 xticks(1:3)
 xticklabels(x_labels)
 xlim([.5 3.5])
+
+title(all_files(isubj).name(7:8))
+
+cleanplot

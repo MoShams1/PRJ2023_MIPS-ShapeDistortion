@@ -2,9 +2,12 @@ clc
 clear
 close all
 
-% Specify the path to the JSON file
-jsonFilePath = '../../data/cyc04/exp03_AI_20240527_120843.json';
-% jsonFilePath = '../../data/cyc04/exp03_MS_20240527_132558.json';
+isubj = 1;
+
+all_files = dir('../../data/cyc04/*exp03*');
+jsonFilePath = fullfile( ...
+    all_files(isubj).folder, ...
+    all_files(isubj).name);
 
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);

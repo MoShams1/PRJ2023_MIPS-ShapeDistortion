@@ -2,9 +2,12 @@ clc
 clear
 close all
 
-% Specify the path to the JSON file
-% jsonFilePath = '../../data/cyc04/exp01_AI_20240527_114550.json';
-jsonFilePath = '../../data/cyc04/exp01_MS_20240527_130953.json';
+isubj = 13;
+
+all_files = dir('../../data/cyc04/*exp01*');
+jsonFilePath = fullfile( ...
+    all_files(isubj).folder, ...
+    all_files(isubj).name);
 
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);
@@ -42,7 +45,10 @@ data_cell = {pse_dva_FG, pse_dva_FE};
 figure('units','inches','outerposition',[1 1 4 4])
 scatterbar(data_cell, 200)
 yline(0)
-cleanplot
 
 xticks(1:2)
 xticklabels(x_labels)
+
+title(all_files(isubj).name(7:8))
+
+cleanplot
