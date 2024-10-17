@@ -1,0 +1,37 @@
+% scatterbar
+% Mohammad Shams <m.shamsahmar@gmail.com>
+% June 2024
+
+function xs = scatterbar(A,szMeanLine,lwMeanLine,szMarker,alphaMarker,spreadMarker)
+% A: a cell of cetegories
+
+A = mat2cell(A, size(A,1), ones(1, size(A,2)));
+
+if nargin == 1
+    nCat = numel(A); % number of categories
+    szMeanLine = .4; % line length for mean
+    lwMeanLine = 5;
+    szMarker = 100; % marker size
+    alphaMarker = .2;
+    spreadMarker = .05; % standard deviation of scatters in each category
+end
+
+hold on
+for icat = 1:nCat    
+    rng default
+    n = numel(A{icat});
+    x = randn(n,1)*spreadMarker + icat;
+    xs(:,icat) = x;
+    
+    scatter(x,A{icat}, ...
+        szMarker,'k','o','filled', ...
+        'markerfacealpha',alphaMarker);
+    line([ ...
+        icat-szMeanLine icat+szMeanLine], ...
+        [mean(A{icat}) mean(A{icat})],...
+        'color','k','linewidth',lwMeanLine);
+end
+
+xlim([0 nCat+1])
+set(gca,'xtick',1:nCat)
+end

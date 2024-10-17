@@ -43,6 +43,8 @@ for isubj = 1:numel(all_files)
         ],1);
 end
 
+save click_err_withFixation.mat click_err_FG click_err_FE
+
 %% plot (errorbar)
 
 x_labels = {'backProbe','edgeProbe','frontProbe'};

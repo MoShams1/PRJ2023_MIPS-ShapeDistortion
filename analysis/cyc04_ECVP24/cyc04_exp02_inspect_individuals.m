@@ -2,7 +2,7 @@ clc
 clear
 close all
 
-isubj = 13;
+isubj = 1;
 
 all_files = dir('../../data/cyc04/*exp02*');
 jsonFilePath = fullfile( ...
@@ -109,4 +109,13 @@ xlim([.5 3.5])
 
 title(all_files(isubj).name(7:8))
 
+cleanplot
+
+%% plot the perceived dots
+
+figure
+hold on
+scatter(click_err_FG(:,1)-.95, ones(1,10));
+scatter(click_err_FG(:,2), ones(1,10));
+scatter(click_err_FG(:,3)+.95, ones(1,10));
 cleanplot

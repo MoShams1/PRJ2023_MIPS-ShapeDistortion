@@ -1,0 +1,109 @@
+clc
+clear
+close all
+
+load click_positions.mat
+
+hBarCenter_FG = mean([backDotX_FG,frontDotX_FG], 2);
+hBarCenter_FE = mean([backDotX_FE,frontDotX_FE], 2);
+
+figure('units','inches','outerposition',[1 1 10 5])
+% sgtitle 'Overall position shift'
+
+
+
+%% plot scatter + model
+
+mdl = fitlm(hBarCenter_FG, hBarCenter_FE);
+
+fprintf([ ...
+    '<Fit parameters> \n' ...
+    '---------------- \n' ...
+    'y = %4.2fx + (%4.2f) \n' ...
+    'adjR2: %4.2f \n'], ...
+    mdl.Coefficients.Estimate(2), ...
+    mdl.Coefficients.Estimate(1), ...
+    mdl.Rsquared.Adjusted)
+
+subplot(1,2,1)
+
+szMarker = 100;
+alphaMarker = .2;
+lwFit = 3;
+lwBound = 2.5;
+c = 'k';
+ticks = 0:10;
+
+hold on
+scatter(hBarCenter_FG, hBarCenter_FE, ...
+    szMarker, c, 'fill', ...
+    'markerfacealpha',alphaMarker)
+h = plot(mdl);
+
+hData = findobj(h,'DisplayName','Data');
+hFit = findobj(h,'DisplayName','Fit');
+hBound = findobj(h,'DisplayName','Confidence bounds');
+hBound = findobj(h,'LineStyle',hBound.LineStyle, 'Color', hBound.Color);
+
+set(hFit,'color',c,'linewidth',lwFit)
+set(hBound,'color',c,'linestyle',':','linewidth',lwBound)
+
+hData.MarkerFaceColor = 'none';
+hData.MarkerEdgeColor = 'none';
+
+addUnityLine
+axis square
+
+xticks(ticks)
+xlabel({'Position shift (dva)'; 'Flash-Grab'})
+
+yticks(ticks)
+ylabel({'Position shift (dva)'; 'Frame'})
+
+title ''
+legend off
+cleanplot
+
+
+
+%% plot difference
+
+subplot(1,2,2)
+
+data_mat = hBarCenter_FE./hBarCenter_FG;
+scatterbar(data_mat);
+errorbar(1, mean(data_mat), SE(data_mat), ...
+    'o','color','k','linewidth',2,'marker','none')
+
+xticks(1)
+set(gca,'xcolor','none')
+
+ylabel 'Ratio'
+yticks(-10:10)
+ylim([.8 3.5])
+yline(1,'-')
+
+% add statistics
+[delta, deltap, p, W, z, r] = signrank_full(data_mat - 1);
+fprintf([ ...
+    '\n <Distortion difference>' ...
+    '\n -----------------------' ...
+    '\n mean decrease = %4.1f pp' ...
+    '\n mean decrease = %3.0f %%' ...
+    '\n W = %5.2f' ...
+    '\n z = %5.2f' ...
+    '\n p = %5.3f' ...
+    '\n r = %4.2f \n'], ...
+delta,deltap,W,z,p,r)
+statbar(1,1,3.2,p)
+
+pbaspect([1,3,1])
+cleanplot
+
+
+
+%% save figure
+set(gcf,'papersize',[10 10])
+saveas(gcf,'../../results/ecvp24_fig03.pdf')
+
+

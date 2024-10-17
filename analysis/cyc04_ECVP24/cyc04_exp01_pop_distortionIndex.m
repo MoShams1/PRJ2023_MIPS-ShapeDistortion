@@ -23,25 +23,31 @@ for isubj = 1:numel(all_files)
     % convert structure to arrays
     typ = struct2cell(jsonData.stimulus_type);
     dir = cell2mat(struct2cell(jsonData.postflash_direction));
+    pse_dva = cell2mat(struct2cell(jsonData.pse_dva));
     pse_norm = cell2mat(struct2cell(jsonData.pse_normalized));
     loop_cnt = cell2mat(struct2cell(jsonData.loop_count));
 
     pse_norm(dir<0) = -pse_norm(dir<0);
+    pse_norm_FG(isubj,1)  = mean(pse_norm(strcmp(typ, 'FG')));
+    pse_norm_FE(isubj,1)  = mean(pse_norm(strcmp(typ, 'FE')));
 
-    pse_FG(isubj,1)  = mean(pse_norm(strcmp(typ, 'FG')));
-    pse_FE(isubj,1)  = mean(pse_norm(strcmp(typ, 'FE')));
+    pse_dva(dir<0) = -pse_dva(dir<0);
+    pse_dva_FG(isubj,1)  = mean(pse_dva(strcmp(typ, 'FG')));
+    pse_dva_FE(isubj,1)  = mean(pse_dva(strcmp(typ, 'FE')));
 
 end
 
 
-%% plot (directions pooled)
+
+%% plot (separate stimuli plus difference)
 
 x_labels = {'FG','FE'};
-data_cell = {pse_FG, pse_FE};
 
-figure('units','inches','outerposition',[7 2 5 7])
-xs = scatterbar(data_cell);
-data_mat = [pse_FG, pse_FE];
+figure('units','inches','outerposition',[7 2 5.5 6])
+subplot(1,2,1)
+
+data_mat = [pse_norm_FG, pse_norm_FE];
+xs = scatterbar(data_mat);
 plot(xs', data_mat', 'color',.5.*ones(1,3))
 errorbar(1:2, mean(data_mat), SE(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
@@ -49,39 +55,77 @@ errorbar(1:2, mean(data_mat), SE(data_mat), ...
 xticks(1:2)
 xticklabels(x_labels)
 
-ylabel({'Shape distortion index', 'in direction of motion'})
+ylabel({'Shape distortion index', '(in direction of motion)'})
 ylim([-.1 .5])
 yticks(0:.25:.5)
-yline(0)
+yline(0,'--')
 
-cleanplot_poster
+cleanplot
 
-%% add stats
 
-[delta, deltap, p, W, z, r] = signrank_full(pse_FG, pse_FE);
+
+subplot(1,2,2)
+data_mat = (pse_norm_FE-pse_norm_FG)./pse_norm_FG*100;
+xs = scatterbar(data_mat);
+errorbar(1, mean(data_mat), SE(data_mat), ...
+    'o','color','k','linewidth',2,'marker','none')
+
+xticks(1)
+set(gca,'xcolor','none')
+
+ylabel({'Difference (%)'})
+ylim([-100 50])
+yticks(-100:50:100)
+yline(0,'--')
+
+pbaspect([.3 1 1])
+cleanplot
+
+
+
+% add stats
+
+[delta, deltap, p, W, z, r] = signrank_full(pse_norm_FG, pse_norm_FE);
 fprintf([ ...
-    '\n <FG vs FE>' ...
-    '\n -----------' ...
-    '\n median decrease = %5.2f dva' ...
-    '\n median decrease = %3.0f %%' ...
+    '\n <Norm. distortion>' ...
+    '\n ------------------' ...
+    '\n mean decrease = %4.1f dva' ...
+    '\n mean decrease = %3.0f %%' ...
     '\n W = %5.2f' ...
     '\n z = %5.2f' ...
     '\n p = %5.3f' ...
     '\n r = %4.2f \n'], ...
 delta,deltap,W,z,p,r)
+subplot(1,2,1)
+statbar(1,2,.5,p)
 
-statbar_poster(1,2, .45, p);
+[delta, deltap, p, W, z, r] = signrank_full(data_mat);
+fprintf([ ...
+    '\n <Distortion difference>' ...
+    '\n -----------------------' ...
+    '\n mean decrease = %4.1f pp' ...
+    '\n mean decrease = %3.0f %%' ...
+    '\n W = %5.2f' ...
+    '\n z = %5.2f' ...
+    '\n p = %5.3f' ...
+    '\n r = %4.2f \n'], ...
+delta,deltap,W,z,p,r)
+subplot(1,2,2)
+statbar(1,1,50,p)
+
 
 %%
 function xs = scatterbar(A)
 % A: a cell of cetegories
+
+A = mat2cell(A, size(A,1), ones(1, size(A,2)));
 
 ncat    = numel(A); % number of categories
 stdx    = .04; % standard deviation of scatters in each category
 mean_line_length  = .4; % line length for mean
 mean_line_width = 5;
 marksz  = 100; % marker size
-alpha = .1;
+alpha = .15;
 
 hold on
 for icat = 1:ncat    

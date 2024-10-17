@@ -61,8 +61,8 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'MS'
-nrep = 5
+subID = 'test'
+nrep = 1
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
@@ -72,9 +72,6 @@ if subID == 'test':
     full_screen = False
 else:
     full_screen = True
-
-slow_factor = 2  # setup = 1, mac = 2
-
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
 
@@ -89,9 +86,13 @@ image_path = os.path.join("image", "cyc04")
 # /// set stimulus parameters
 
 # monitor and window
-refresh_rate = 60  # [frames/s]
-mon = sfc.config_mon_dell()
-win = sfc.config_win(mon=mon, fullscr=full_screen)
+refresh_rate = 120  # [frames/s]
+mon = sfc.config_mon_macair()
+win = visual.Window(monitor=mon,
+                    units='deg',
+                    size=[1440, 700],
+                    pos=[0, 0],
+                    color=[0, 0, 0])
 sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
@@ -136,16 +137,14 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 10)
-assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 5), 2)
-assert (dir_array.size == ntrs)
+stm_array = ['FG', 'FE']
+dir_array = [1, 1]
 
 # randomize the order of each condition array
-ind_shuffle = np.arange(ntrs)
-np.random.shuffle(ind_shuffle)
-stm_array = stm_array[ind_shuffle]
-dir_array = dir_array[ind_shuffle]
+# ind_shuffle = np.arange(ntrs)
+# np.random.shuffle(ind_shuffle)
+# stm_array = stm_array[ind_shuffle]
+# dir_array = dir_array[ind_shuffle]
 
 # inter-block trials: trials that define the end of a block
 pause_array = np.linspace(0, ntrs, nblocks + 1)
@@ -236,8 +235,8 @@ for itrial in range(ntrs):
         sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
 
     # gap period
-    for igap in range(int(refresh_rate/2) +
-                      random.choice(range(int(refresh_rate/2)))):
+    for igap in range(int(refresh_rate / 2) +
+                      random.choice(range(int(refresh_rate / 2)))):
         win.flip()
 
     # motion period
@@ -245,32 +244,31 @@ for itrial in range(ntrs):
     while loop_flag:
         loop_cntr += 1
         for imotion in motion_array:
-            for islow in range(slow_factor):
 
-                # transfer mouse position to horizontal bar position
-                bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
-                          bar_h_x_offset
+            # transfer mouse position to horizontal bar position
+            bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
+                      bar_h_x_offset
 
-                # limit horizontal bar's motion range
-                if bar_h_x < -bar_h_x_limit:
-                    bar_h_x = -bar_h_x_limit
-                if bar_h_x > bar_h_x_limit:
-                    bar_h_x = bar_h_x_limit
+            # limit horizontal bar's motion range
+            if bar_h_x < -bar_h_x_limit:
+                bar_h_x = -bar_h_x_limit
+            if bar_h_x > bar_h_x_limit:
+                bar_h_x = bar_h_x_limit
 
-                if stm_array[itrial] == 'FG':
-                    FG.ori = imotion
-                    FG.draw()
-                if stm_array[itrial] == 'FE':
-                    FE.pos = imotion, FE_y
-                    FE.draw()
+            if stm_array[itrial] == 'FG':
+                FG.ori = imotion
+                FG.draw()
+            if stm_array[itrial] == 'FE':
+                FE.pos = imotion, FE_y
+                FE.draw()
 
-                if imotion == motion_pos1 and loop_cntr > 1:
-                    bar_v.draw()
-                    bar_h.pos = bar_h_x, bar_h_y
-                    bar_h.draw()
+            if imotion == motion_pos1 and loop_cntr > 1:
+                bar_v.draw()
+                bar_h.pos = bar_h_x, bar_h_y
+                bar_h.draw()
 
-                fixdot.draw()
-                win.flip()
+            fixdot.draw()
+            win.flip()
 
             # exit loop upon request
             pressed_key = event.getKeys(keyList=['space', 'escape'])
@@ -309,9 +307,9 @@ for itrial in range(ntrs):
 print('===========================')
 print(
     f'flash {probe_duration_frames} '
-    f'+ motion {len(motion_array_base)-2} '
+    f'+ motion {len(motion_array_base) - 2} '
     f'+ pause {probe_duration_frames} '
-    f'+ motion {len(motion_array_base)-2} [frames]'
+    f'+ motion {len(motion_array_base) - 2} [frames]'
 )
 print('===========================')
 
