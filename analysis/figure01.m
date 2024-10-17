@@ -90,11 +90,11 @@ addUnityLine
 axis square
 
 xticks(ticks)
-xlabel({'Observed distortion'; 'Flash-Grab'})
+xlabel({'Distortion'; 'Flash-Grab'})
 xline(0)
 
 yticks(ticks)
-ylabel({'Observed distortion'; 'Frame'})
+ylabel({'Distortion'; 'Frame'})
 yline(0)
 
 title ''
@@ -109,7 +109,7 @@ subplot(1,2,2)
 
 data_mat = (distortion_observed_FE-distortion_observed_FG)./distortion_observed_FG*100;
 scatterbar(data_mat);
-errorbar(1, mean(data_mat), SE(data_mat), ...
+errorbar(1, median(data_mat), SE(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
 
 xticks(1)
