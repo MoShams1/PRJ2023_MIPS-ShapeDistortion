@@ -4,8 +4,20 @@ close all
 
 load click_positions.mat
 
+% hBarCenter_FG = mean([centerDotX_FG], 2);
+% hBarCenter_FE = mean([centerDotX_FE], 2);
+
+% hBarCenter_FG = mean([backDotX_FG], 2);
+% hBarCenter_FE = mean([backDotX_FE], 2);
+
+% hBarCenter_FG = mean([frontDotX_FG], 2);
+% hBarCenter_FE = mean([frontDotX_FE], 2);
+
 hBarCenter_FG = mean([backDotX_FG,frontDotX_FG], 2);
 hBarCenter_FE = mean([backDotX_FE,frontDotX_FE], 2);
+
+% hBarCenter_FG = mean([backDotX_FG,frontDotX_FG,centerDotX_FG], 2);
+% hBarCenter_FE = mean([backDotX_FE,frontDotX_FE,centerDotX_FE], 2);
 
 figure('units','inches','outerposition',[1 1 10 5])
 % sgtitle 'Overall position shift'
