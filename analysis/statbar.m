@@ -17,11 +17,14 @@ elseif p <= .01
 elseif p <= .05
     text_message = '*';
 else
-    text_message = '';
+    text_message = '\itn.s.';
+    fontsz = fontsz * .65;
+    text_offset = text_offset * 3;
 end
 if (x1 ~= x2) && (~strcmp(text_message,''))
     line([x1 x2], [y y], 'linewidth', lw,'color','k')
     line([x1 x1], [y y-whisker_length], 'linewidth', lw,'color','k')
     line([x2 x2], [y y-whisker_length], 'linewidth', lw,'color','k')
 end
+
 text(mean([x1,x2]),y+text_offset,text_message,'horiz','center','fontsize',fontsz)

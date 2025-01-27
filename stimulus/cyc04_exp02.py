@@ -72,7 +72,7 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
 nblocks = 2
 
-if subID == 'test':
+if subID == 'MS-test':
     full_screen = False
 else:
     full_screen = True

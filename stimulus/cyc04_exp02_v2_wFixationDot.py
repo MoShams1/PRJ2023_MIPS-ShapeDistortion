@@ -63,7 +63,8 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'MS'
+subID = 'MS-test'
+slow_factor = 2  # [1]60Hz monitor  [2]120 Hz monitor
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
@@ -231,28 +232,29 @@ for itrial in range(ntrs):
     # motion period
     for ioscillation in range(5):
         for imotion in motion_array:
+            for islow in range(slow_factor):
 
-            if stm_array[itrial] == 'FG':
-                FG.ori = imotion
-                FG.draw()
-            elif stm_array[itrial] == 'FE':
-                FE.pos = imotion, FE_y
-                FE.draw()
-            else:
-                continue
+                if stm_array[itrial] == 'FG':
+                    FG.ori = imotion
+                    FG.draw()
+                elif stm_array[itrial] == 'FE':
+                    FE.pos = imotion, FE_y
+                    FE.draw()
+                else:
+                    continue
 
-            if imotion == motion_pos1 and ioscillation > 0:
-                probe.pos = probe_x_array[itrial], probe_y
-                probe.draw()
+                if imotion == motion_pos1 and ioscillation > 0:
+                    probe.pos = probe_x_array[itrial], probe_y
+                    probe.draw()
 
-            fixdot.draw()
-            win.flip()
+                fixdot.draw()
+                win.flip()
 
-            # exit loop upon request
-            pressed_key = event.getKeys(keyList=['escape'])
-            if 'escape' in pressed_key:
-                core.quit()
-                break
+                # exit loop upon request
+                pressed_key = event.getKeys(keyList=['escape'])
+                if 'escape' in pressed_key:
+                    core.quit()
+                    break
 
     mouse = event.Mouse(visible=True,
                         newPos=[random.choice(range(-3, 3)),

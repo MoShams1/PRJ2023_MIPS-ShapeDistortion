@@ -67,7 +67,7 @@ alphaMarker = .2;
 lwFit = 4;
 lwBound = 2;
 c = 'k';
-ticks = -1:.25:1;
+ticks = -1:.2:1;
 
 hold on
 scatter(distortion_observed_FG, distortion_observed_FE, ...
@@ -86,8 +86,9 @@ set(hBound,'color',c,'linestyle',':','linewidth',lwBound)
 hData.MarkerFaceColor = 'none';
 hData.MarkerEdgeColor = 'none';
 
+% axis([-.1 .5 -.1 .5])
 addUnityLine
-axis square
+% axis square
 
 xticks(ticks)
 xlabel({'Distortion'; 'Flash-Grab'})
@@ -97,31 +98,33 @@ yticks(ticks)
 ylabel({'Distortion'; 'Frame'})
 yline(0)
 
+text(.4, -.05, ['N = ',num2str(numel(all_files))])
+
 title ''
 legend off
 cleanplot
 
-
+fprintf('\n*** FG median observed distortion: %4.2f', median(distortion_observed_FG))
+fprintf('\n*** FE median observed distortion: %4.2f\n', median(distortion_observed_FE))
 
 %% plot difference
 
 subplot(1,2,2)
 
 data_mat = (distortion_observed_FE-distortion_observed_FG)./distortion_observed_FG*100;
-scatterbar(data_mat);
-errorbar(1, median(data_mat), SE(data_mat), ...
+scatterbar_median(data_mat);
+errorbar(1, median(data_mat), MAD(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
 
 xticks(1)
 set(gca,'xcolor','none')
 
-ylabel({'Distortion difference (%)'})
+ylabel({'Distortion difference (%)'; '(Frame vs. Flash-Grab)'})
 yticks(-100:50:100)
 ylim([-100 50])
 yline(0,'-')
 
 pbaspect([1,3,1])
-
 
 
 %% add statistics
@@ -145,6 +148,6 @@ cleanplot
 
 %% save figure
 set(gcf,'papersize',[8.3 11.7])
-saveas(gcf,'../results/fig01.pdf')
+saveas(gcf,'../results/fig02.pdf')
 
 
