@@ -68,12 +68,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # /// INSERT SESSION'S META DATA ///
 
 subID = 'MS'
-nrep = 5
+nrep = 10
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
-nblocks = 2
+nblocks = 6
 
 if subID == '0002':
     full_screen = False
