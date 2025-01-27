@@ -25,12 +25,7 @@ FIVE repetitions per stimulus
 
 -----------
 To do:
-[Done] make the frame stimulus half the size
-[Done] adjust the frame's travel distance
-[Done] move the fixation dot to the side
-[Done] move the current T as it is to the side, ahead of the motion
-[Done] add a new T that flashes always symmetrically
-[Done] make sure the inputs match expectations
+
 """
 
 import os
@@ -70,7 +65,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'test'
+subID = '0002'
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
@@ -82,7 +77,7 @@ if subID == 'test':
 else:
     full_screen = True
 
-slow_factor = 2  # setup = 1, mac = 2
+slow_factor = 1  # setup = 1, mac = 2
 
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
