@@ -67,7 +67,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'MS'
+subID = 'test'
 nrep = 10
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
@@ -75,7 +75,7 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
 nblocks = 6
 
-if subID == '0002':
+if subID == 'test':
     full_screen = False
 else:
     full_screen = True
@@ -145,11 +145,11 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 30)
+stm_array = np.repeat(['FG', 'FE'], 60)
 assert (stm_array.size == ntrs)
-probe_x_array = np.tile(np.repeat([-1, 0, 1], 10), 2)
+probe_x_array = np.tile(np.repeat([-1, 0, 1], 20), 2)
 assert (probe_x_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 5), 6)
+dir_array = np.tile(np.repeat([-1, 1], 10), 6)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
