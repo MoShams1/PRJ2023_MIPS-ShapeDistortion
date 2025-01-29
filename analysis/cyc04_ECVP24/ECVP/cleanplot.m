@@ -13,4 +13,4 @@ end
 
 set(gca,'TitleFontWeight','bold','TitleFontSizeMultiplier',1)
 set(gca,'LabelFontSizeMultiplier',1.2)
-fontsize(gca,scale=1)
+fontsize(gca,scale=1.5)

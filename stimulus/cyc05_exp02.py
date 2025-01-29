@@ -67,7 +67,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0002'
+subID = 'MS-test'
 nrep = 10
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
@@ -103,8 +103,8 @@ sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
 fixdot_radius = .25  # [dva]
-FIX_X = 7  # [dva]
-FIX_Y = 0  # [dva]
+FIX_X = 6.6  # [dva]
+FIX_Y = 3  # [dva]
 
 # FG
 FG_size = 10  # [dva]
@@ -117,17 +117,15 @@ FG_pos2 = 90  # [degrees of arc]
 FE_size = 10  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
-FE_pos1 = -2.5  # [dva]
-FE_pos2 = 2.5  # [dva]
+FE_pos1 = -2.45  # [dva]
+FE_pos2 = 2.45  # [dva]
 
 # probe
-probe1_radius = .28
+probe1_radius = .25
 probe1_color = 'black'
-probe2_radius = .20  # [dva]
-probe2_color = 'gold'
-probe3_radius = .12  # [dva]
-probe3_color = 'red'
-probe_y = 4.82  # [dva]
+probe2_radius = .15  # [dva]
+probe2_color = 'white'
+probe_y = 4.85  # [dva]
 probe_duration_frames = 3  # [frames]
 
 # motion
@@ -147,7 +145,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # create an equal number of trials per condition
 stm_array = np.repeat(['FG', 'FE'], 60)
 assert (stm_array.size == ntrs)
-probe_x_array = np.tile(np.repeat([-1, 0, 1], 20), 2)
+probe_x_array = np.tile(np.repeat([-.75, 0, .75], 20), 2)
 assert (probe_x_array.size == ntrs)
 dir_array = np.tile(np.repeat([-1, 1], 10), 6)
 assert (dir_array.size == ntrs)
@@ -183,9 +181,6 @@ probe1 = visual.Circle(win,
 probe2 = visual.Circle(win,
                        radius=probe2_radius,
                        fillColor=probe2_color)
-probe3 = visual.Circle(win,
-                       radius=probe3_radius,
-                       fillColor=probe3_color)
 # fixation mark
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
@@ -212,7 +207,8 @@ for itrial in range(ntrs):
     # /// set up the stimulus behavior in current trial
 
     # locate the fixation dot ahead of the post-flash motion
-    fixdot.pos = (-dir_array[itrial] * FIX_X, FIX_Y)
+    fixdot_y_offset = np.random.choice(np.arange(-1, 1, .1))
+    fixdot.pos = (FIX_X, FIX_Y + fixdot_y_offset)
 
     # --------------------------------
     # create motion arrays
@@ -266,10 +262,8 @@ for itrial in range(ntrs):
                 if imotion == motion_pos1 and ioscillation > 0:
                     probe1.pos = probe_x_array[itrial], probe_y
                     probe2.pos = probe_x_array[itrial], probe_y
-                    probe3.pos = probe_x_array[itrial], probe_y
                     probe1.draw()
                     probe2.draw()
-                    probe3.draw()
 
                 fixdot.draw()
                 win.flip()
@@ -311,16 +305,5 @@ for itrial in range(ntrs):
 
     if itrial == ntrs - 1:
         sfc.end_screen(win)
-
-# --------------------------------
-# /// report
-print('===========================')
-print(
-    f'flash {probe_duration_frames} '
-    f'+ motion {len(motion_array_base) - 2} '
-    f'+ pause {probe_duration_frames} '
-    f'+ motion {len(motion_array_base) - 2} [frames]'
-)
-print('===========================')
 
 win.close()
