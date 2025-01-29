@@ -312,7 +312,6 @@ for itrial in range(ntrs):
                 if stm_array[itrial] == 'FG':
                     FG.ori = imotion
                     FG.draw()
-                    # donut.draw()
                 if stm_array[itrial] == 'FE':
                     FE.pos = imotion, FE_y
                     FE.draw()
