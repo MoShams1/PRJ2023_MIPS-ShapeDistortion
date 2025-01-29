@@ -80,7 +80,7 @@ if subID == 'test':
 else:
     full_screen = True
 
-slow_factor = 1  # [1]60Hz monitor  [2]120 Hz monitor
+slow_factor = 2  # [1]60Hz monitor  [2]120 Hz monitor
 
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
@@ -103,7 +103,7 @@ sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
 fixdot_radius = .25  # [dva]
-FIX_X = 6.6  # [dva]
+FIX_X = 6.5  # [dva]
 FIX_Y = 3  # [dva]
 
 # FG
@@ -244,6 +244,12 @@ for itrial in range(ntrs):
     # gap period
     for igap in range(int(refresh_rate / 2) +
                       random.choice(range(int(refresh_rate / 2)))):
+        win.flip()
+
+    # fixation only period
+    for igap in range(int(refresh_rate) +
+                      random.choice(range(int(refresh_rate / 2)))):
+        fixdot.draw()
         win.flip()
 
     # motion period
