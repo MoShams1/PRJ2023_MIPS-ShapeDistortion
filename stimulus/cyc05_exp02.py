@@ -80,7 +80,7 @@ if subID == 'test':
 else:
     full_screen = True
 
-slow_factor = 2  # [1]60Hz monitor  [2]120 Hz monitor
+slow_factor = 1  # [1]60Hz monitor  [2]120 Hz monitor
 
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
