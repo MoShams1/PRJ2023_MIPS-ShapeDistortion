@@ -2,11 +2,15 @@ clc
 clear
 close all
 
-% jsonFilePath = '../../data/cyc05/exp02_0002_20250130_102509.json';
-% jsonFilePath = '../../data/cyc05/exp02_0003_20250131_123210.json';
-% jsonFilePath = '../../data/cyc05/exp02_0004_20250131_182152.json';
-% jsonFilePath = '../../data/cyc05/exp02_0005_20250131_191337.json';
-jsonFilePath = '../../data/cycd05/exp02_0006_20250131_201218.json';
+
+all_files = dir('../../data/cyc05/*exp02*');
+
+isubj = 1;
+
+jsonFilePath = fullfile( ...
+        all_files(isubj).folder, ...
+        all_files(isubj).name);
+
 
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);
@@ -29,20 +33,24 @@ probe_y = cell2mat(struct2cell(jsonData.probe_y));
 click_err_y = click_y - probe_y;
 
 
+% figure
+% click_err_x_FG = click_err_x(strcmp(typ,'FG') & dir<0 & probe_x<0);
+% scatterbar_median(click_err_x_FG)
+
 click_err_x(dir<0) = -click_err_x(dir<0);
 probe_lead = probe_x;
-probe_lead(dir<0) = -probe_lead(dir<0);
+probe_lead(dir<0) = probe_lead(dir<0);
 
 click_err_x_FG = [
-    click_err_x(strcmp(typ,'FG') & probe_lead<0), ...
+    click_err_x(strcmp(typ,'FG') & probe_lead<0 ), ...
     click_err_x(strcmp(typ,'FG') & probe_lead==0), ...
-    click_err_x(strcmp(typ,'FG') & probe_lead>0) ...
+    click_err_x(strcmp(typ,'FG') & probe_lead>0 ) ...
     ];
 
 click_err_x_FE = [
-    click_err_x(strcmp(typ,'FE') & probe_lead<0), ...
+    click_err_x(strcmp(typ,'FE') & probe_lead<0 ), ...
     click_err_x(strcmp(typ,'FE') & probe_lead==0), ...
-    click_err_x(strcmp(typ,'FE') & probe_lead>0) ...
+    click_err_x(strcmp(typ,'FE') & probe_lead>0 ) ...
     ];
 
 click_err_y_FG = [
@@ -82,6 +90,9 @@ backDotY_FE = click_err_y_FE(:,1) + probeOffset_y;
 centerDotY_FE = click_err_y_FE(:,2) + probeOffset_y;
 frontDotY_FE = click_err_y_FE(:,3) + probeOffset_y;
 
+%%
+figure
+scatterbar_median([backDotX_FG,centerDotX_FG,frontDotX_FG])
 
 %% 2D plot of the click positions
 
