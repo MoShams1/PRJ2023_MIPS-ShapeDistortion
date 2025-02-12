@@ -2,67 +2,71 @@ clc
 clear
 close all
 
-% jsonFilePath = '../../data/cyc05/exp02_0002_20250130_102509.json';
-% jsonFilePath = '../../data/cyc05/exp02_0003_20250131_123210.json';
-% jsonFilePath = '../../data/cyc05/exp02_0004_20250131_182152.json';
-% jsonFilePath = '../../data/cyc05/exp02_0005_20250131_191337.json';
-jsonFilePath = '../../data/cycd05/exp02_0006_20250131_201218.json';
+all_files = dir('../../data/cyc05/*exp02*');
 
-% Open the JSON file and read its content
-fileID = fopen(jsonFilePath);
-jsonContent = fread(fileID, '*char')';
-fclose(fileID);
+for isubj = 1:numel(all_files)
 
-% Parse the JSON content
-jsonData = jsondecode(jsonContent);
+    jsonFilePath = fullfile( ...
+        all_files(isubj).folder, ...
+        all_files(isubj).name);
 
-clear jsonFilePath jsonContent fileID
+    % Open the JSON file and read its content
+    fileID = fopen(jsonFilePath);
+    jsonContent = fread(fileID, '*char')';
+    fclose(fileID);
 
-% convert structure to arrays
-typ = struct2cell(jsonData.stimulus_type);
-dir = cell2mat(struct2cell(jsonData.postflash_direction));
-click_x = cell2mat(struct2cell(jsonData.click_x));
-probe_x = cell2mat(struct2cell(jsonData.probe_x));
-click_err_x = click_x - probe_x;
-click_y = cell2mat(struct2cell(jsonData.click_y));
-probe_y = cell2mat(struct2cell(jsonData.probe_y));
-click_err_y = click_y - probe_y;
+    % Parse the JSON content
+    jsonData = jsondecode(jsonContent);
+
+    clear jsonFilePath jsonContent fileID
+
+    % convert structure to arrays
+    typ = struct2cell(jsonData.stimulus_type);
+    dir = cell2mat(struct2cell(jsonData.postflash_direction));
+    click_x = cell2mat(struct2cell(jsonData.click_x));
+    probe_x = cell2mat(struct2cell(jsonData.probe_x));
+    click_err_x = click_x - probe_x;
+    click_y = cell2mat(struct2cell(jsonData.click_y));
+    probe_y = cell2mat(struct2cell(jsonData.probe_y));
+    click_err_y = click_y - probe_y;
 
 
-click_err_x(dir<0) = -click_err_x(dir<0);
-probe_lead = probe_x;
-probe_lead(dir<0) = -probe_lead(dir<0);
+    click_err_x(dir<0) = -click_err_x(dir<0);
+    probe_lead = probe_x;
+    probe_lead(dir<0) = -probe_lead(dir<0);
 
-click_err_x_FG = [
-    click_err_x(strcmp(typ,'FG') & probe_lead<0), ...
-    click_err_x(strcmp(typ,'FG') & probe_lead==0), ...
-    click_err_x(strcmp(typ,'FG') & probe_lead>0) ...
-    ];
+    click_err_x_FG(isubj,:) = mean([
+        click_err_x(strcmp(typ,'FG') & probe_lead<0), ...
+        click_err_x(strcmp(typ,'FG') & probe_lead==0), ...
+        click_err_x(strcmp(typ,'FG') & probe_lead>0) ...
+        ],1);
 
-click_err_x_FE = [
-    click_err_x(strcmp(typ,'FE') & probe_lead<0), ...
-    click_err_x(strcmp(typ,'FE') & probe_lead==0), ...
-    click_err_x(strcmp(typ,'FE') & probe_lead>0) ...
-    ];
+    click_err_x_FE(isubj,:) = mean([
+        click_err_x(strcmp(typ,'FE') & probe_lead<0), ...
+        click_err_x(strcmp(typ,'FE') & probe_lead==0), ...
+        click_err_x(strcmp(typ,'FE') & probe_lead>0) ...
+        ],1);
 
-click_err_y_FG = [
-    click_err_y(strcmp(typ,'FG') & probe_lead<0), ...
-    click_err_y(strcmp(typ,'FG') & probe_lead==0), ...
-    click_err_y(strcmp(typ,'FG') & probe_lead>0) ...
-    ];
+    click_err_y_FG(isubj,:) = mean([
+        click_err_y(strcmp(typ,'FG') & probe_lead<0), ...
+        click_err_y(strcmp(typ,'FG') & probe_lead==0), ...
+        click_err_y(strcmp(typ,'FG') & probe_lead>0) ...
+        ],1);
 
-click_err_y_FE = [
-    click_err_y(strcmp(typ,'FE') & probe_lead<0), ...
-    click_err_y(strcmp(typ,'FE') & probe_lead==0), ...
-    click_err_y(strcmp(typ,'FE') & probe_lead>0) ...
-    ];
+    click_err_y_FE(isubj,:) = mean([
+        click_err_y(strcmp(typ,'FE') & probe_lead<0), ...
+        click_err_y(strcmp(typ,'FE') & probe_lead==0), ...
+        click_err_y(strcmp(typ,'FE') & probe_lead>0) ...
+        ],1);
+end
 
 
 
 %% retrieve actual click locations
 
 probeOffset_x = max(probe_x);
-probeOffset_y = max(probe_y);
+% probeOffset_y = max(probe_y);
+probeOffset_y = 5;
 
 % FG
 backDotX_FG = click_err_x_FG(:,1) - probeOffset_x;
@@ -83,9 +87,16 @@ centerDotY_FE = click_err_y_FE(:,2) + probeOffset_y;
 frontDotY_FE = click_err_y_FE(:,3) + probeOffset_y;
 
 
+
+%% save data
+save click_positions.mat ...
+    backDotX_FG centerDotX_FG frontDotX_FG ...
+    backDotX_FE centerDotX_FE frontDotX_FE
+
+
 %% 2D plot of the click positions
 
-figure('units','inches','outerposition',[0, 0, 6.5, 4])
+figure('units','inches','outerposition',[0, 0, 7, 4])
 
 c = lines(7);
 cBack = c(2,:);
@@ -99,8 +110,11 @@ lwMarker = 2;
 alphaMarker = .2;
 lwErrorBar = 2;
 
-axis_limits = [-2 4 1 7];
-ticks = -10:2:10;
+axis_limits = [-3 3 1.5 7.5];
+ticks = -10:1:10;
+
+% axis_limits = [-6 6 -6 6];
+% ticks = -10:2:10;
 
 
 
@@ -181,22 +195,26 @@ errorbar(median(frontDotX_FE),median(frontDotY_FE), ...
 
 
 title Frame
-% xlabel 'Horizontal position (dva)'
+xlabel 'Horizontal position (dva)'
 xticks(ticks)
-% ylabel 'Vertical position (dva)'
-yticks([])
+ylabel 'Vertical position (dva)'
+% yticks([])
 
 axis(axis_limits)
 axis square
 
-% text(2.5, 1.5, ['N = ',num2str(numel(all_files))])
+text(1.75, 2, ['N = ',num2str(numel(all_files))])
 
 cleanplot
 
 % set(gca,'color',cBG.*ones(1,3))
-set(gcf,'InvertHardcopy','off')
+% set(gcf,'InvertHardcopy','off')
 box on
 grid on
 
+
+%% save figure
+% set(gcf,'papersize',[8.3 11.7])
+% saveas(gcf,'../results/fig03_wFixDot.pdf')
 
 

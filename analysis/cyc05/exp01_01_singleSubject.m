@@ -3,7 +3,12 @@ clear
 close all
 
 
-jsonFilePath = '../../data/cyc05/exp01_MS-test_20250129_173239.json';
+% jsonFilePath = '../../data/cyc05/exp01_0002_20250130_101604.json';
+% jsonFilePath = '../../data/cyc05/exp01_0003_20250131_122237.json';
+% jsonFilePath = '../../data/cyc05/exp01_0004_20250131_180557.json';
+% jsonFilePath = '../../data/cyc05/exp01_0005_20250131_190415.json';
+jsonFilePath = '../../data/cyc05/exp01_0006_20250131_200341.json';
+
 
 
 % Open the JSON file and read its content

@@ -2,14 +2,8 @@ clc
 clear
 close all
 
-
 load distortion_observed.mat
-
-exclude_subj_index = [1 2 4 5 7 9 10 11];
-distortion_observed_FG(exclude_subj_index) = [];
-distortion_observed_FE(exclude_subj_index) = [];
-
-load click_positions_wFixDot.mat
+load click_positions.mat
 
 hBarLength_FG = abs(frontDotX_FG - backDotX_FG);
 hBarLength_FE = abs(frontDotX_FE - backDotX_FE);
@@ -23,10 +17,6 @@ rightHand_FE = abs(frontDotX_FE - centerDotX_FE);
 distortion_expected_FG = (leftHand_FG-rightHand_FG) ./ hBarLength_FG;
 distortion_expected_FE = (leftHand_FE-rightHand_FE) ./ hBarLength_FE;
 
-exclude_subj_index = [3 5 7];
-distortion_expected_FG(exclude_subj_index) = [];
-distortion_expected_FE(exclude_subj_index) = [];
-
 figure('units','inches','outerposition',[1 1 6.75 8])
 
 
@@ -36,14 +26,14 @@ subplot(2,2,1)
 szMarker = 100;
 alphaMarker = .2;
 c = 'k';
-ticks = 0:.2:1;
+ticks = 0:.25:1;
 
 hold on
 scatter(distortion_expected_FG, distortion_observed_FG, ...
     szMarker, c, 'fill', ...
     'markerfacealpha',alphaMarker)
 
-axis([-.1 .8 -.1 .8])
+% axis([-.1 1 -.1 1])
 addUnityLine
 
 xticks(ticks)
@@ -54,7 +44,7 @@ yticks(ticks)
 ylabel 'Observed distortion'
 yline(0)
 
-text(.5, .05, ['N = ',num2str(numel(distortion_observed_FG))])
+text(.05, .9, ['N = ',num2str(numel(hBarLength_FG))])
 
 title ''
 legend off
@@ -82,7 +72,7 @@ set(gca,'xcolor','none')
 
 ylabel({'Distortion difference (%)'; '(Observed vs. Inferred)'})
 yticks(-200:50:200)
-ylim([-100 150])
+% ylim([-200 50])
 yline(0,'-')
 
 % add statistics
@@ -96,7 +86,7 @@ fprintf([ ...
     '\n p = %5.3f' ...
     '\n r = %4.2f \n'], ...
 delta,W,z,p,r)
-statbar(1,1,150,p)
+statbar(1,1,-210,p)
 
 pbaspect([1,3,1])
 cleanplot
@@ -109,7 +99,7 @@ scatter(distortion_expected_FE, distortion_observed_FE, ...
     szMarker, c, 'fill', ...
     'markerfacealpha',alphaMarker)
 
-axis([-.1 .8 -.1 .8])
+% axis([-.1 1 -.1 1])
 addUnityLine
 
 xticks(ticks)
@@ -120,7 +110,7 @@ yticks(ticks)
 ylabel 'Observed distortion'
 yline(0)
 
-text(.05, .7, ['N = ',num2str(numel(distortion_observed_FG))])
+text(.05, .9, ['N = ',num2str(numel(hBarLength_FG))])
 
 title ''
 legend off
@@ -146,8 +136,8 @@ xticks(1)
 set(gca,'xcolor','none')
 
 ylabel({'Distortion difference (%)'; '(Observed vs. Inferred)'})
-yticks(-200:25:200)
-ylim([-120 20])
+yticks(-200:50:200)
+% ylim([-200 50])
 yline(0,'-')
 
 % add statistics
@@ -161,7 +151,7 @@ fprintf([ ...
     '\n p = %5.3f' ...
     '\n r = %4.2f \n'], ...
 delta,W,z,p,r)
-statbar(1,1,-120,p)
+statbar(1,1,-210,p)
 
 pbaspect([1,3,1])
 cleanplot
@@ -182,6 +172,6 @@ delta,W,z,p,r)
 
 %% save figure
 % set(gcf,'papersize',[8.3 11.7])
-% saveas(gcf,'../results/fig05_wFixDot.pdf')
+% saveas(gcf,'../results/fig05.pdf')
 
 

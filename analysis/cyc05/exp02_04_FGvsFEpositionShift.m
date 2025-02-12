@@ -1,7 +1,7 @@
 clc
 clear
 
-load click_positions_wFixDot.mat
+load click_positions.mat
 
 hBarCenter_FG = mean([backDotX_FG,frontDotX_FG], 2);
 hBarCenter_FE = mean([backDotX_FE,frontDotX_FE], 2);
