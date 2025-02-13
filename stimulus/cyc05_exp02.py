@@ -121,12 +121,13 @@ FE_pos1 = -2.45  # [dva]
 FE_pos2 = 2.45  # [dva]
 
 # probe
-probe1_radius = .25
+probe1_radius = .35
 probe1_color = 'black'
-probe2_radius = .15  # [dva]
-probe2_color = 'white'
+probe2_radius = .30  # [dva]
+probe2_color = 'tomato'
 probe_y = 4.85  # [dva]
 probe_duration_frames = 3  # [frames]
+probe_nflashes = 5
 
 # motion
 motion_cycle_dur_s = .8
@@ -253,7 +254,7 @@ for itrial in range(ntrs):
         win.flip()
 
     # motion period
-    for ioscillation in range(4):
+    for ioscillation in range(probe_nflashes+1):
         for imotion in motion_array:
             for islow in range(slow_factor):
                 if stm_array[itrial] == 'FG':
@@ -284,6 +285,7 @@ for itrial in range(ntrs):
                         newPos=[random.choice(range(-3, 3)),
                                 random.choice(range(-3, 3))])
     while not mouse.getPressed()[0]:
+        fixdot.draw()
         win.flip()
     while mouse.getPressed()[0]:
         pass
