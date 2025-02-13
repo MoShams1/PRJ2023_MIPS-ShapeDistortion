@@ -43,11 +43,14 @@ save distortion_observed.mat ...
 %% plot scatter: FG distortion vs. FE distortion
 
 figure('units','inches','outerposition',[0 0 4 4])
+hold on
 
 data_mat = [distortion_observed_FG, distortion_observed_FE];
-scatterbar_median(data_mat);
+xs = scatterbar_median(data_mat);
 errorbar(1:2, median(data_mat), MAD(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
+
+plot(xs', data_mat', 'color', .5 * ones(1,3))
 
 xticks(1:2)
 xticklabels({'FG', 'FE'})
@@ -60,7 +63,7 @@ pbaspect([1,2,1])
 
 cleanplot
 
-% stat
+%% stat
 [delta, ~, p, W, z, r] = signrank_full(distortion_observed_FG, distortion_observed_FE);
 fprintf([ ...
     '\n <Distortion difference>' ...
@@ -72,107 +75,6 @@ fprintf([ ...
     '\n r = %4.2f \n'], ...
 delta,W,z,p,r)
 statbar(1,2, .9, p);
-
-%% plot scatter + model
-% 
-% mdl = fitlm(distortion_observed_FG, distortion_observed_FE);
-% 
-% fprintf([ ...
-%     '<Fit parameters> \n' ...
-%     '---------------- \n' ...
-%     'y = %4.2fx + (%4.2f) \n' ...
-%     'adjR2: %4.2f \n'], ...
-%     mdl.Coefficients.Estimate(2), ...
-%     mdl.Coefficients.Estimate(1), ...
-%     mdl.Rsquared.Adjusted)
-% 
-% disp(mdl)
-% 
-% figure('units','inches','outerposition',[0 0 6.5 4])
-% 
-% subplot(1,2,1)
-% 
-% szMarker = 70;
-% alphaMarker = .2;
-% lwFit = 4;
-% lwBound = 2;
-% c = 'k';
-% ticks = -1:.2:1;
-% 
-% hold on
-% scatter(distortion_observed_FG, distortion_observed_FE, ...
-%     szMarker, c, 'fill', ...
-%     'markerfacealpha',alphaMarker)
-% h = plot(mdl);
-% 
-% hData = findobj(h,'DisplayName','Data');
-% hFit = findobj(h,'DisplayName','Fit');
-% hBound = findobj(h,'DisplayName','Confidence bounds');
-% hBound = findobj(h,'LineStyle',hBound.LineStyle,'Color',hBound.Color);
-% 
-% set(hFit,'color',c,'linewidth',lwFit)
-% set(hBound,'color',c,'linestyle',':','linewidth',lwBound)
-% 
-% hData.MarkerFaceColor = 'none';
-% hData.MarkerEdgeColor = 'none';
-% 
-% % axis([-.1 .5 -.1 .5])
-% addUnityLine
-% % axis square
-% 
-% xticks(ticks)
-% xlabel({'Distortion'; 'Flash-Grab'})
-% xline(0)
-% 
-% yticks(ticks)
-% ylabel({'Distortion'; 'Frame'})
-% yline(0)
-% 
-% text(.4, -.05, ['N = ',num2str(numel(all_files))])
-% 
-% title ''
-% legend off
-% cleanplot
-% 
-% fprintf('\n*** FG median observed distortion: %4.2f', median(distortion_observed_FG))
-% fprintf('\n*** FE median observed distortion: %4.2f\n', median(distortion_observed_FE))
-% 
-% %% plot difference
-% 
-% subplot(1,2,2)
-% 
-% data_mat = (distortion_observed_FE-distortion_observed_FG)./distortion_observed_FG*100;
-% scatterbar_median(data_mat);
-% errorbar(1, median(data_mat), MAD(data_mat), ...
-%     'o','color','k','linewidth',2,'marker','none')
-% 
-% xticks(1)
-% set(gca,'xcolor','none')
-% 
-% ylabel({'Distortion difference (%)'; '(Frame vs. Flash-Grab)'})
-% yticks(-100:50:100)
-% ylim([-100 50])
-% yline(0,'-')
-% 
-% pbaspect([1,3,1])
-% 
-% 
-% %% add statistics
-% 
-% % scatterbar plot
-% subplot(1,2,2)
-% [delta, ~, p, W, z, r] = signrank_full(data_mat);
-% fprintf([ ...
-%     '\n <Distortion difference>' ...
-%     '\n -----------------------' ...
-%     '\n median difference = %4.1f %%'...
-%     '\n W = %5.2f' ...
-%     '\n z = %5.2f' ...
-%     '\n p = %5.3f' ...
-%     '\n r = %4.2f \n'], ...
-% delta,W,z,p,r)
-% statbar(1,1, -110, p);
-% cleanplot
 
 
 
