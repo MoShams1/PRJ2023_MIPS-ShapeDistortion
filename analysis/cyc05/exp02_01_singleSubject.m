@@ -5,7 +5,7 @@ close all
 
 all_files = dir('../../data/cyc05/*exp02*');
 
-isubj = 1;
+isubj = 2;
 
 jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...
@@ -39,7 +39,7 @@ click_err_y = click_y - probe_y;
 
 click_err_x(dir<0) = -click_err_x(dir<0);
 probe_lead = probe_x;
-probe_lead(dir<0) = probe_lead(dir<0);
+probe_lead(dir<0) = -probe_lead(dir<0);
 
 click_err_x_FG = [
     click_err_x(strcmp(typ,'FG') & probe_lead<0 ), ...
@@ -91,8 +91,19 @@ centerDotY_FE = click_err_y_FE(:,2) + probeOffset_y;
 frontDotY_FE = click_err_y_FE(:,3) + probeOffset_y;
 
 %%
+[~,sig1_FG] = ranksum(backDotX_FG, centerDotX_FG);
+[~,sig2_FG] = ranksum(centerDotX_FG, frontDotX_FG);
+[~,sig3_FG] = ranksum(backDotX_FG, frontDotX_FG);
+
+[~,sig1_FE] = ranksum(backDotX_FE, centerDotX_FE);
+[~,sig2_FE] = ranksum(centerDotX_FE, frontDotX_FE);
+[~,sig3_FE] = ranksum(backDotX_FE, frontDotX_FE);
+
 figure
 scatterbar_median([backDotX_FG,centerDotX_FG,frontDotX_FG])
+
+figure
+scatterbar_median([backDotX_FE,centerDotX_FE,frontDotX_FE])
 
 %% 2D plot of the click positions
 
