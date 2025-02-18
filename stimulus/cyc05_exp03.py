@@ -64,13 +64,14 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'test'
+subID = 'ms-test'
 nrep = 10
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 2
-slow_factor = 2  # setup = 1, mac = 2
+slow_factor = 1  # setup = 1, mac = 2
+
 
 if subID == 'test':
     full_screen = False
