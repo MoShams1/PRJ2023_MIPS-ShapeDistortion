@@ -65,19 +65,18 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0001'
+subID = 'ms-test'
 nrep = 10
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 2
+slow_factor = 2  # setup = 1, mac = 2
 
 if subID == 'test':
     full_screen = False
 else:
     full_screen = True
-
-slow_factor = 1  # setup = 1, mac = 2
 
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
@@ -104,18 +103,18 @@ FIX_X = 6.5  # [dva]
 FIX_Y = 3  # [dva]
 
 # FG
-FG_size = 10  # [dva]
+FG_size = 24.4  # [dva]
 FG_x = 0  # [dva]
 FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
 # donut
-donut_radius = 3.63  # [dva]
-donut_color = [0, 0, 0]
+# donut_radius = 3.63  # [dva]
+# donut_color = [0, 0, 0]
 
 # FE
-FE_size = 10  # [dva]
+FE_size = 24.4  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
 FE_pos1 = -2.45  # [dva]
@@ -183,9 +182,9 @@ FG = visual.ImageStim(win,
                       image=FG_directory,
                       size=FG_size)
 # donut
-donut = visual.Circle(win,
-                      radius=donut_radius,
-                      fillColor=donut_color)
+# donut = visual.Circle(win,
+#                       radius=donut_radius,
+#                       fillColor=donut_color)
 # FE
 FE_directory = os.path.join(image_path, 'FE.png')
 FE = visual.ImageStim(win,

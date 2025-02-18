@@ -64,17 +64,19 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'ms-test'
-nrep = 5
-nstm = 4  # number of stimuli (cross_disc, cross_frame, frame_disc, frame_frame)
+subID = 'test'
+nrep = 10
+nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
-nblocks = 1
+nblocks = 2
+slow_factor = 2  # setup = 1, mac = 2
 
 if subID == 'test':
     full_screen = False
 else:
     full_screen = True
+
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
 
@@ -96,40 +98,55 @@ sfc.test_refresh_rate(win, refresh_rate)
 
 # fixation mark
 fixdot_radius = .25  # [dva]
-FIX_X = 0  # [dva]
-FIX_Y = 0  # [dva]
+FIX_X = 6.5  # [dva]
+FIX_Y = 3  # [dva]
 
 # FG
-FG_size = 16  # [dva]
+FG_size = 24.4  # [dva]
 FG_x = 0  # [dva]
 FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
 # FE
-FE_size = 42  # [dva]
+FE_size = 24.4  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
-FE_pos1 = -3.9  # [dva]
-FE_pos2 = 3.9  # [dva]
+FE_pos1 = -2.45  # [dva]
+FE_pos2 = 2.45  # [dva]
 
 # maskFG
-maskFG_size = 42  # [dva]
+maskFG_size = 24.4  # [dva]
 maskFG_x = 0  # [dva]
 maskFG_y = 0  # [dva]
 
 # maskFE
-maskFE_size = 42  # [dva]
+maskFE_size = 24.4  # [dva]
 maskFE_x = 0  # [dva]
 maskFE_y = 0  # [dva]
 
+# replica/probe
+bar_size = 1.5  # [dva]
+
 # probe
-bar_size = 2.4  # [dva]
-bar_h_y = 4.2  # [dva]
-bar_v_x = 0  # [dva]
-bar_v_y = 4.2  # [dva]
-bar_h_x_limit = .95  # [dva]
+bar_probe_h_x = 0  # [dva]
+bar_probe_h_y = 4.3  # [dva]
+bar_probe_v_x = 0  # [dva]
+bar_probe_v_y = 4.3  # [dva]
 probe_duration_frames = 3  # [frames]
+
+# replica
+bar_replica_h_x = 2  # [dva] rel. to fixation dot
+bar_replica_h_y = 0  # [dva] rel. to fixation dot
+bar_replica_v_x = 2  # [dva] rel. to fixation dot
+bar_replica_v_y = 0  # [dva] rel. to fixation dot
+bar_replica_change_limit = .5  # [dva]
+
+# box
+box_height = 1.25
+box_width = 2
+box_color = 'green'
+box_y = 0  # rel. to horizontal bar
 
 # motion
 motion_cycle_dur_s = .8
@@ -150,7 +167,7 @@ stm_array = np.repeat([
     'cross_disc',
     'cross_frame',
     'frame_disc',
-    'frame_frame'], 10)
+    'frame'], 10)
 assert (stm_array.size == ntrs)
 dir_array = np.tile(np.repeat([-1, 1], 5), 4)
 assert (dir_array.size == ntrs)
@@ -188,24 +205,44 @@ maskFE_directory = os.path.join(image_path, 'mask_frame.png')
 maskFE = visual.ImageStim(win,
                           image=maskFE_directory,
                           size=maskFE_size)
-# probe
+# probe/replica
 bar_h_directory = os.path.join(image_path, 'bar_h.png')
-bar_h = visual.ImageStim(win,
-                         image=bar_h_directory,
-                         size=bar_size)
 bar_v_directory = os.path.join(image_path, 'bar_v.png')
-bar_v = visual.ImageStim(win,
-                         image=bar_v_directory,
-                         size=bar_size,
-                         pos=(bar_v_x, bar_v_y))
+bar_probe_h = visual.ImageStim(win,
+                               image=bar_h_directory,
+                               pos=(bar_probe_h_x, bar_probe_h_y),
+                               size=bar_size)
+bar_probe_v = visual.ImageStim(win,
+                               image=bar_v_directory,
+                               size=bar_size,
+                               pos=(bar_probe_v_x, bar_probe_v_y))
+bar_replica_h = visual.ImageStim(win,
+                                 image=bar_h_directory,
+                                 size=bar_size)
+bar_replica_v = visual.ImageStim(win,
+                                 image=bar_v_directory,
+                                 size=bar_size)
 # fixation mark
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
-                       pos=(FIX_X, FIX_Y),
-                       fillColor='green')
+                       fillColor='black')
+# box
+box_probe = visual.Rect(win,
+                        width=box_width,
+                        height=box_height,
+                        pos=(0, bar_probe_h_y + box_y),
+                        fillColor=box_color)
+box_replica = visual.Rect(win,
+                          width=box_width + .5,
+                          height=box_height,
+                          fillColor=box_color)
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///
+stm_array[0] = 'cross_disc'
+stm_array[1] = 'cross_frame'
+stm_array[2] = 'frame_disc'
+stm_array[3] = 'frame'
 
 for itrial in range(ntrs):
 
@@ -217,16 +254,19 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// reset variables
     mouse.setPos((0, 0))
-    bar_h_x = np.nan
+    bar_replica_change = np.nan
     loop_cntr = 0
 
     # --------------------------------
     # /// set up the stimulus behavior in current trial
+    fixdot_y_offset = np.random.choice(np.arange(-1, 1, .1))
+    fixdot.pos = (FIX_X, FIX_Y + fixdot_y_offset)
 
     # add random offset to horizontal bar's onset position
-    bar_h_x_offset = np.random.choice(np.arange(-bar_h_x_limit,
-                                                bar_h_x_limit,
-                                                0.1))
+    bar_replica_h_x_offset = \
+        np.random.choice(np.arange(-bar_replica_change_limit,
+                                   bar_replica_change_limit,
+                                   0.1))
 
     # --------------------------------
     # create motion arrays
@@ -236,7 +276,7 @@ for itrial in range(ntrs):
         motion_pos1 = FG_pos1
         motion_pos2 = dir_array[itrial] * FG_pos2
     elif (stm_array[itrial] == 'frame_disc') or \
-            (stm_array[itrial] == 'frame_frame'):
+            (stm_array[itrial] == 'frame'):
         motion_pos1 = dir_array[itrial] * FE_pos1
         motion_pos2 = dir_array[itrial] * FE_pos2
     else:
@@ -266,45 +306,59 @@ for itrial in range(ntrs):
                       random.choice(range(int(refresh_rate / 2)))):
         win.flip()
 
+    # fixation only period
+    for igap in range(int(refresh_rate) +
+                      random.choice(range(int(refresh_rate / 2)))):
+        fixdot.draw()
+        win.flip()
+
     # motion period
     loop_flag = True
     while loop_flag:
         loop_cntr += 1
         for imotion in motion_array:
+            for islow in range(slow_factor):
 
-            # transfer mouse position to horizontal bar position
-            bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
-                      bar_h_x_offset
+                # transfer mouse position to horizontal bar position
+                bar_replica_change = mouse.getPos()[0] / mouse_precision_coeff \
+                                     + bar_replica_h_x_offset
 
-            # limit horizontal bar's motion range
-            if bar_h_x < -bar_h_x_limit:
-                bar_h_x = -bar_h_x_limit
-            if bar_h_x > bar_h_x_limit:
-                bar_h_x = bar_h_x_limit
+                # limit horizontal bar's motion range
+                if bar_replica_change < -bar_replica_change_limit:
+                    bar_replica_change = -bar_replica_change_limit
+                if bar_replica_change > bar_replica_change_limit:
+                    bar_replica_change = bar_replica_change_limit
 
-            if (stm_array[itrial] == 'cross_disc') or \
-                    (stm_array[itrial] == 'cross_frame'):
-                FG.ori = imotion
-                FG.draw()
-            if (stm_array[itrial] == 'frame_disc') or \
-                    (stm_array[itrial] == 'frame_frame'):
-                FE.pos = imotion, FE_y
-                FE.draw()
+                if (stm_array[itrial] == 'cross_disc') or \
+                        (stm_array[itrial] == 'cross_frame'):
+                    FG.ori = imotion
+                    FG.draw()
+                if (stm_array[itrial] == 'frame_disc') or \
+                        (stm_array[itrial] == 'frame'):
+                    FE.pos = imotion, FE_y
+                    FE.draw()
 
-            if (stm_array[itrial] == 'cross_disc') or \
-                    (stm_array[itrial] == 'frame_disc'):
-                maskFG.draw()
-            if (stm_array[itrial] == 'cross_frame') or \
-                    (stm_array[itrial] == 'frame_frame'):
-                maskFE.draw()
+                if (stm_array[itrial] == 'cross_disc') or \
+                        (stm_array[itrial] == 'frame_disc'):
+                    maskFG.draw()
+                if stm_array[itrial] == 'cross_frame':
+                    maskFE.draw()
 
-            if imotion == motion_pos1 and loop_cntr > 1:
-                bar_v.draw()
-                bar_h.pos = bar_h_x, bar_h_y
-                bar_h.draw()
+                # flash probe at beggining of each cycle after the 1st cycle
+                if imotion == motion_pos1 and loop_cntr > 1:
+                    bar_probe_v.draw()
+                    bar_probe_h.draw()
 
-            fixdot.draw()
-            win.flip()
+                # draw replica
+                bar_replica_v.pos = (bar_replica_v_x + fixdot.pos[0],
+                                     bar_replica_v_y + fixdot.pos[1])
+                bar_replica_h.pos = (bar_replica_h_x + fixdot.pos[0] +
+                                     bar_replica_change,
+                                     bar_replica_h_y + fixdot.pos[1])
+                bar_replica_v.draw()
+                bar_replica_h.draw()
+                fixdot.draw()
+                win.flip()
 
             # exit loop upon request
             pressed_key = event.getKeys(keyList=['space', 'escape'])
@@ -314,8 +368,9 @@ for itrial in range(ntrs):
                 loop_flag = False
                 break
 
-    print(f'PSE_dva: {np.round(bar_h_x, 2)}')
-    print(f'PSE_normalized: {np.round(bar_h_x / bar_h_x_limit, 2)}')
+    print(f'PSE_dva: {np.round(bar_replica_change, 2)}')
+    print(f'PSE_normalized: '
+          f'{np.round(bar_replica_change / bar_replica_change_limit, 2)}')
 
     # --------------------------------
     # /// save
@@ -324,8 +379,9 @@ for itrial in range(ntrs):
     trial_dict = {'trial_number': itrial + 1,
                   'stimulus_type': stm_array[itrial],
                   'postflash_direction': dir_array[itrial],
-                  'pse_dva': np.round(bar_h_x, 2),
-                  'pse_normalized': np.round(bar_h_x / bar_h_x_limit, 2),
+                  'pse_dva': np.round(bar_replica_change, 2),
+                  'pse_normalized': np.round(bar_replica_change /
+                                             bar_replica_change_limit, 2),
                   'loop_count': loop_cntr}
 
     dfnew = pd.DataFrame(trial_dict, index=[0])
@@ -337,16 +393,5 @@ for itrial in range(ntrs):
 
     if itrial == ntrs - 1:
         sfc.end_screen(win)
-
-# --------------------------------
-# /// report
-print('===========================')
-print(
-    f'flash {probe_duration_frames} '
-    f'+ motion {len(motion_array_base) - 2} '
-    f'+ pause {probe_duration_frames} '
-    f'+ motion {len(motion_array_base) - 2} [frames]'
-)
-print('===========================')
 
 win.close()
