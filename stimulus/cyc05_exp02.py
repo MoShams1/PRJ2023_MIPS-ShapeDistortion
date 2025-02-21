@@ -75,7 +75,7 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
 nblocks = 9
 
-slow_factor = 2  # setup = 1, mac = 2
+slow_factor = 1  # setup = 1, mac = 2
 
 if subID == 'test':
     full_screen = False
@@ -123,7 +123,7 @@ FE_pos2 = 2.45  # [dva]
 # probe
 probe1_radius = .35
 probe1_color = [72, -128, -128]  # [-128 to 128] to match RGB of the T in Exp1
-probe2_radius = .20  # [dva]
+probe2_radius = .15  # [dva]
 probe2_color = 'white'
 probe_y = 4.85  # [dva]
 probe_duration_frames = 3  # [frames]
@@ -144,11 +144,11 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 60)
+stm_array = np.repeat(['FG', 'FE'], 90)
 assert (stm_array.size == ntrs)
-probe_x_array = np.tile(np.repeat([-.75, 0, .75], 20), 2)
+probe_x_array = np.tile(np.repeat([-.75, 0, .75], 30), 2)
 assert (probe_x_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 10), 6)
+dir_array = np.tile(np.repeat([-1, 1], 15), 6)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array

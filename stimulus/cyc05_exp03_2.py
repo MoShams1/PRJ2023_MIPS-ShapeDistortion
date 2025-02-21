@@ -17,6 +17,7 @@ FOUR stimuli:
     Rotating cross within disc (FlashGrab stimulus)
     Rotating cross within frame
     Translating frame within disc
+    Translating frame within frame
     Translating frame within frame (FrameEffect stimulus)
 
 TWO post-flash dirctions:
@@ -67,12 +68,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'ms-test'
+subID = 'test'
 nrep = 10
-nstm = 4  # number of stimuli (FG, FE)
+nstm = 5  # number of stimuli
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
-nblocks = 4
+nblocks = 5
 
 slow_factor = 1  # setup = 1, mac = 2
 
@@ -166,9 +167,10 @@ stm_array = np.repeat([
     'cross_disc',
     'cross_frame',
     'frame_disc',
+    'frame_frame',
     'frame'], 20)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 10), 4)
+dir_array = np.tile(np.repeat([-1, 1], 10), 5)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
@@ -231,6 +233,12 @@ fixdot = visual.Circle(win,
 
 for itrial in range(ntrs):
 
+    stm_array[0] = 'cross_disc'
+    stm_array[1] = 'cross_frame'
+    stm_array[2] = 'frame_disc'
+    stm_array[3] = 'frame_frame'
+    stm_array[4] = 'frame'
+
     print('---------------------------')
     print(f'trl: {itrial + 1}')
     print(f'stm: {stm_array[itrial]}')
@@ -261,6 +269,7 @@ for itrial in range(ntrs):
         motion_pos1 = FG_pos1
         motion_pos2 = dir_array[itrial] * FG_pos2
     elif (stm_array[itrial] == 'frame_disc') or \
+            (stm_array[itrial] == 'frame_frame') or \
             (stm_array[itrial] == 'frame'):
         motion_pos1 = dir_array[itrial] * FE_pos1
         motion_pos2 = dir_array[itrial] * FE_pos2
@@ -319,6 +328,7 @@ for itrial in range(ntrs):
                     FG.ori = imotion
                     FG.draw()
                 if (stm_array[itrial] == 'frame_disc') or \
+                        (stm_array[itrial] == 'frame_frame') or \
                         (stm_array[itrial] == 'frame'):
                     FE.pos = imotion, FE_y
                     FE.draw()
@@ -326,7 +336,9 @@ for itrial in range(ntrs):
                 if (stm_array[itrial] == 'cross_disc') or \
                         (stm_array[itrial] == 'frame_disc'):
                     maskFG.draw()
-                if stm_array[itrial] == 'cross_frame':
+
+                if (stm_array[itrial] == 'cross_frame') or \
+                        (stm_array[itrial] == 'frame_frame'):
                     maskFE.draw()
 
                 # flash probe at beggining of each cycle after the 1st cycle

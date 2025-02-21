@@ -63,7 +63,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'MS-test'
+subID = 'test'
 slow_factor = 2  # [1]60Hz monitor  [2]120 Hz monitor
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
@@ -72,7 +72,7 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
 nblocks = 2
 
-if subID == 'test':
+if subID == 'MS-test':
     full_screen = False
 else:
     full_screen = True
@@ -82,9 +82,9 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp02_v2_{subID}_{date}_{time}.json"
-save_path = os.path.join("..", "data", "cyc04", output_file_name)
-image_path = os.path.join("image", "cyc04")
+output_file_name = f"exp02_{subID}_{date}_{time}.json"
+save_path = os.path.join("../..", "data", "cyc04", output_file_name)
+image_path = os.path.join("../image", "cyc04")
 
 # --------------------------------
 # /// set stimulus parameters
@@ -224,9 +224,15 @@ for itrial in range(ntrs):
     if itrial in pause_array:
         sfc.block_msg(win, np.where(pause_array == itrial)[0][0]+1, nblocks)
 
-    # gap period
-    for igap in range(int(refresh_rate / 2) +
-                      random.choice(range(int(refresh_rate / 2)))):
+    for igap in range(int(refresh_rate/2)+1):
+        win.flip()
+
+    for ifix in range(int(refresh_rate)):
+        fixdot.draw()
+        win.flip()
+
+    for igap in range(int(refresh_rate/2) +
+                      random.choice(range(int(refresh_rate/2)))):
         win.flip()
 
     # motion period
@@ -247,7 +253,6 @@ for itrial in range(ntrs):
                     probe.pos = probe_x_array[itrial], probe_y
                     probe.draw()
 
-                fixdot.draw()
                 win.flip()
 
                 # exit loop upon request

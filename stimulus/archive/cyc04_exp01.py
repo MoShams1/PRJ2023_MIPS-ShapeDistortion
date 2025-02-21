@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 03)
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 01)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024
@@ -12,11 +12,9 @@ Task Procedure:
     Subject adjusts the horizontal component of the "T" to obtain symmetry
 
 ----------
-FOUR stimuli:
-    Flash-Grab stimulus + half-disc mask
-    Flash-Grab stimulus + frame mask
-    Frame-Effect stimulus + half-disc mask
-    Frame-Effect stimulus + frame mask
+TWO stimuli:
+    Flash-Grab stimulus
+    Frame-Effect stimulus
 
 TWO post-flash dirctions:
         -1: leftward post-flash motion
@@ -63,26 +61,29 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'test'
+subID = 'MS'
 nrep = 5
-nstm = 4  # number of stimuli (FG_maskFG, FG_maskFE, FE_maskFG, FE_maskFE)
+nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 1
 
-if subID == 'ttest':
+if subID == 'test':
     full_screen = False
 else:
     full_screen = True
+
+slow_factor = 2  # setup = 1, mac = 2
+
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
 
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp03_{subID}_{date}_{time}.json"
-save_path = os.path.join("..", "data", "cyc04", output_file_name)
-image_path = os.path.join("image", "cyc04")
+output_file_name = f"exp01_{subID}_{date}_{time}.json"
+save_path = os.path.join("../..", "data", "cyc04", output_file_name)
+image_path = os.path.join("../image", "cyc04")
 
 # --------------------------------
 # /// set stimulus parameters
@@ -99,28 +100,18 @@ FIX_X = 0  # [dva]
 FIX_Y = 0  # [dva]
 
 # FG
-FG_size = 16  # [dva]
+FG_size = 10  # [dva]
 FG_x = 0  # [dva]
 FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
 # FE
-FE_size = 42  # [dva]
+FE_size = 10  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
 FE_pos1 = -3.9  # [dva]
 FE_pos2 = 3.9  # [dva]
-
-# maskFG
-maskFG_size = 42  # [dva]
-maskFG_x = 0  # [dva]
-maskFG_y = 0  # [dva]
-
-# maskFE
-maskFE_size = 42  # [dva]
-maskFE_x = 0  # [dva]
-maskFE_y = 0  # [dva]
 
 # probe
 bar_size = 2.4  # [dva]
@@ -145,9 +136,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG_maskFG', 'FG_maskFE', 'FE_maskFG', 'FE_maskFE'], 10)
+stm_array = np.repeat(['FG', 'FE'], 10)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 5), 4)
+dir_array = np.tile(np.repeat([-1, 1], 5), 2)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
@@ -164,25 +155,15 @@ pause_array = pause_array[:-1]
 # /// VISUAL OBJECTS ///
 
 # FG
-FG_directory = os.path.join(image_path, 'largeFG.png')
+FG_directory = os.path.join(image_path, 'FG.png')
 FG = visual.ImageStim(win,
                       image=FG_directory,
                       size=FG_size)
 # FE
-FE_directory = os.path.join(image_path, 'largeFE.png')
+FE_directory = os.path.join(image_path, 'FE.png')
 FE = visual.ImageStim(win,
                       image=FE_directory,
                       size=FE_size)
-# maskFG
-maskFG_directory = os.path.join(image_path, 'maskFG.png')
-maskFG = visual.ImageStim(win,
-                          image=maskFG_directory,
-                          size=maskFG_size)
-# maskFE
-maskFE_directory = os.path.join(image_path, 'maskFE.png')
-maskFE = visual.ImageStim(win,
-                          image=maskFE_directory,
-                          size=maskFE_size)
 # probe
 bar_h_directory = os.path.join(image_path, 'bar_h.png')
 bar_h = visual.ImageStim(win,
@@ -226,12 +207,10 @@ for itrial in range(ntrs):
     # --------------------------------
     # create motion arrays
 
-    if (stm_array[itrial] == 'FG_maskFG') or\
-            (stm_array[itrial] == 'FG_maskFE'):
+    if stm_array[itrial] == 'FG':
         motion_pos1 = FG_pos1
         motion_pos2 = dir_array[itrial] * FG_pos2
-    elif (stm_array[itrial] == 'FE_maskFG') or\
-            (stm_array[itrial] == 'FE_maskFE'):
+    elif stm_array[itrial] == 'FE':
         motion_pos1 = dir_array[itrial] * FE_pos1
         motion_pos2 = dir_array[itrial] * FE_pos2
     else:
@@ -266,40 +245,32 @@ for itrial in range(ntrs):
     while loop_flag:
         loop_cntr += 1
         for imotion in motion_array:
+            for islow in range(slow_factor):
 
-            # transfer mouse position to horizontal bar position
-            bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
-                      bar_h_x_offset
+                # transfer mouse position to horizontal bar position
+                bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
+                          bar_h_x_offset
 
-            # limit horizontal bar's motion range
-            if bar_h_x < -bar_h_x_limit:
-                bar_h_x = -bar_h_x_limit
-            if bar_h_x > bar_h_x_limit:
-                bar_h_x = bar_h_x_limit
+                # limit horizontal bar's motion range
+                if bar_h_x < -bar_h_x_limit:
+                    bar_h_x = -bar_h_x_limit
+                if bar_h_x > bar_h_x_limit:
+                    bar_h_x = bar_h_x_limit
 
-            if (stm_array[itrial] == 'FG_maskFG') or\
-                    (stm_array[itrial] == 'FG_maskFE'):
-                FG.ori = imotion
-                FG.draw()
-            if (stm_array[itrial] == 'FE_maskFG') or\
-                    (stm_array[itrial] == 'FE_maskFE'):
-                FE.pos = imotion, FE_y
-                FE.draw()
+                if stm_array[itrial] == 'FG':
+                    FG.ori = imotion
+                    FG.draw()
+                if stm_array[itrial] == 'FE':
+                    FE.pos = imotion, FE_y
+                    FE.draw()
 
-            if (stm_array[itrial] == 'FG_maskFG') or\
-                    (stm_array[itrial] == 'FE_maskFG'):
-                maskFG.draw()
-            if (stm_array[itrial] == 'FG_maskFE') or\
-                    (stm_array[itrial] == 'FE_maskFE'):
-                maskFE.draw()
+                if imotion == motion_pos1 and loop_cntr > 1:
+                    bar_v.draw()
+                    bar_h.pos = bar_h_x, bar_h_y
+                    bar_h.draw()
 
-            if imotion == motion_pos1 and loop_cntr > 1:
-                bar_v.draw()
-                bar_h.pos = bar_h_x, bar_h_y
-                bar_h.draw()
-
-            fixdot.draw()
-            win.flip()
+                fixdot.draw()
+                win.flip()
 
             # exit loop upon request
             pressed_key = event.getKeys(keyList=['space', 'escape'])

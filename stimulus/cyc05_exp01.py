@@ -21,8 +21,6 @@ TWO post-flash dirctions:
         -1: leftward post-flash motion
         +1: rightward post-flash motion
 
-FIVE repetitions per stimulus
-
 -----------
 To do:
 
@@ -72,7 +70,7 @@ ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 2
 
-slow_factor = 2  # setup = 1, mac = 2
+slow_factor = 1  # setup = 1, mac = 2
 
 if subID == 'test':
     full_screen = False

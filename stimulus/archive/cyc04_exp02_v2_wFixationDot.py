@@ -1,5 +1,5 @@
 """
-***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 01)
+***** project: PRJ2023_MIPS-ShapeDistortion (Experiment 02)
 
     Mohammad Shams <m.shams.ahmar@gmail.com>
     May 2024
@@ -8,7 +8,7 @@
 Task Procedure:
     Either: A FG stimulus oscillates for 90 deg
     Or: A FE stimulus oscillates for half of its width
-    A T-shaped stimulus flashes at one of the reversals
+    A probe flashes at five different locations over three oscillations
     Subject adjusts the horizontal component of the "T" to obtain symmetry
 
 ----------
@@ -20,7 +20,9 @@ TWO post-flash dirctions:
         -1: leftward post-flash motion
         +1: rightward post-flash motion
 
-FIVE repetitions per stimulus
+Three probe locations
+
+Five repetitions per stimulus
 
 """
 
@@ -29,8 +31,8 @@ import random
 import warnings
 import numpy as np
 import pandas as pd
-from lib import stim_flow_control as sfc
 from psychopy import event, visual, core
+from lib import stim_flow_control as sfc
 
 
 def deg2rad(angle):
@@ -61,29 +63,28 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'MS'
+subID = 'MS-test'
+slow_factor = 2  # [1]60Hz monitor  [2]120 Hz monitor
 nrep = 5
 nstm = 2  # number of stimuli (FG, FE)
+nloc = 3  # number of probe locations
 ndir = 2  # number of direction of motions (flash-left, flash-right)
-ntrs = nrep * nstm * ndir
-nblocks = 1
+ntrs = nrep * nstm * nloc * ndir
+nblocks = 2
 
 if subID == 'test':
     full_screen = False
 else:
     full_screen = True
-
-slow_factor = 2  # setup = 1, mac = 2
-
 # ----------------------------------------------------------------------------
 # /// CONFIGURATION ///
 
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp01_{subID}_{date}_{time}.json"
-save_path = os.path.join("..", "data", "cyc04", output_file_name)
-image_path = os.path.join("image", "cyc04")
+output_file_name = f"exp02_v2_{subID}_{date}_{time}.json"
+save_path = os.path.join("../..", "data", "cyc04", output_file_name)
+image_path = os.path.join("../image", "cyc04")
 
 # --------------------------------
 # /// set stimulus parameters
@@ -114,11 +115,8 @@ FE_pos1 = -3.9  # [dva]
 FE_pos2 = 3.9  # [dva]
 
 # probe
-bar_size = 2.4  # [dva]
-bar_h_y = 4.2  # [dva]
-bar_v_x = 0  # [dva]
-bar_v_y = 4.2  # [dva]
-bar_h_x_limit = .95  # [dva]
+probe_radius = .25  # [dva]
+probe_y = 4.82  # [dva]
 probe_duration_frames = 3  # [frames]
 
 # motion
@@ -136,15 +134,18 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 10)
+stm_array = np.repeat(['FG', 'FE'], 30)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 5), 2)
+probe_x_array = np.tile(np.repeat([-1.2, 0, 1.2], 10), 2)
+assert (probe_x_array.size == ntrs)
+dir_array = np.tile(np.repeat([-1, 1], 5), 6)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
 ind_shuffle = np.arange(ntrs)
 np.random.shuffle(ind_shuffle)
 stm_array = stm_array[ind_shuffle]
+probe_x_array = probe_x_array[ind_shuffle]
 dir_array = dir_array[ind_shuffle]
 
 # inter-block trials: trials that define the end of a block
@@ -165,15 +166,9 @@ FE = visual.ImageStim(win,
                       image=FE_directory,
                       size=FE_size)
 # probe
-bar_h_directory = os.path.join(image_path, 'bar_h.png')
-bar_h = visual.ImageStim(win,
-                         image=bar_h_directory,
-                         size=bar_size)
-bar_v_directory = os.path.join(image_path, 'bar_v.png')
-bar_v = visual.ImageStim(win,
-                         image=bar_v_directory,
-                         size=bar_size,
-                         pos=(bar_v_x, bar_v_y))
+probe = visual.Circle(win,
+                      radius=probe_radius,
+                      fillColor='red')
 # fixation mark
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
@@ -193,18 +188,12 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// reset variables
     mouse.setPos((0, 0))
+    mouse.setVisible(False)
     bar_h_x = np.nan
-    loop_cntr = 0
 
     # --------------------------------
     # /// set up the stimulus behavior in current trial
 
-    # add random offset to horizontal bar's onset position
-    bar_h_x_offset = np.random.choice(np.arange(-bar_h_x_limit,
-                                                bar_h_x_limit,
-                                                0.1))
-
-    # --------------------------------
     # create motion arrays
 
     if stm_array[itrial] == 'FG':
@@ -233,55 +222,49 @@ for itrial in range(ntrs):
 
     # opening message
     if itrial in pause_array:
-        sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
+        sfc.block_msg(win, np.where(pause_array == itrial)[0][0]+1, nblocks)
 
     # gap period
-    for igap in range(int(refresh_rate/2) +
-                      random.choice(range(int(refresh_rate/2)))):
+    for igap in range(int(refresh_rate / 2) +
+                      random.choice(range(int(refresh_rate / 2)))):
         win.flip()
 
     # motion period
-    loop_flag = True
-    while loop_flag:
-        loop_cntr += 1
+    for ioscillation in range(5):
         for imotion in motion_array:
             for islow in range(slow_factor):
-
-                # transfer mouse position to horizontal bar position
-                bar_h_x = mouse.getPos()[0] / mouse_precision_coeff + \
-                          bar_h_x_offset
-
-                # limit horizontal bar's motion range
-                if bar_h_x < -bar_h_x_limit:
-                    bar_h_x = -bar_h_x_limit
-                if bar_h_x > bar_h_x_limit:
-                    bar_h_x = bar_h_x_limit
 
                 if stm_array[itrial] == 'FG':
                     FG.ori = imotion
                     FG.draw()
-                if stm_array[itrial] == 'FE':
+                elif stm_array[itrial] == 'FE':
                     FE.pos = imotion, FE_y
                     FE.draw()
+                else:
+                    continue
 
-                if imotion == motion_pos1 and loop_cntr > 1:
-                    bar_v.draw()
-                    bar_h.pos = bar_h_x, bar_h_y
-                    bar_h.draw()
+                if imotion == motion_pos1 and ioscillation > 0:
+                    probe.pos = probe_x_array[itrial], probe_y
+                    probe.draw()
 
                 fixdot.draw()
                 win.flip()
 
-            # exit loop upon request
-            pressed_key = event.getKeys(keyList=['space', 'escape'])
-            if 'escape' in pressed_key:
-                core.quit()
-            if 'space' in pressed_key:
-                loop_flag = False
-                break
+                # exit loop upon request
+                pressed_key = event.getKeys(keyList=['escape'])
+                if 'escape' in pressed_key:
+                    core.quit()
+                    break
 
-    print(f'PSE_dva: {np.round(bar_h_x, 2)}')
-    print(f'PSE_normalized: {np.round(bar_h_x / bar_h_x_limit, 2)}')
+    mouse = event.Mouse(visible=True,
+                        newPos=[random.choice(range(-3, 3)),
+                                random.choice(range(-3, 3))])
+    while not mouse.getPressed()[0]:
+        win.flip()
+    while mouse.getPressed()[0]:
+        pass
+    click_loc = mouse.getPos()
+    print(f'click location: {click_loc}')
 
     # --------------------------------
     # /// save
@@ -290,9 +273,10 @@ for itrial in range(ntrs):
     trial_dict = {'trial_number': itrial + 1,
                   'stimulus_type': stm_array[itrial],
                   'postflash_direction': dir_array[itrial],
-                  'pse_dva': np.round(bar_h_x, 2),
-                  'pse_normalized': np.round(bar_h_x / bar_h_x_limit, 2),
-                  'loop_count': loop_cntr}
+                  'probe_x': probe_x_array[itrial],
+                  'probe_y': probe_y,
+                  'click_x': round(click_loc[0], 2),
+                  'click_y': round(click_loc[1], 2)}
 
     dfnew = pd.DataFrame(trial_dict, index=[0])
 
@@ -309,9 +293,9 @@ for itrial in range(ntrs):
 print('===========================')
 print(
     f'flash {probe_duration_frames} '
-    f'+ motion {len(motion_array_base)-2} '
+    f'+ motion {len(motion_array_base) - 2} '
     f'+ pause {probe_duration_frames} '
-    f'+ motion {len(motion_array_base)-2} [frames]'
+    f'+ motion {len(motion_array_base) - 2} [frames]'
 )
 print('===========================')
 

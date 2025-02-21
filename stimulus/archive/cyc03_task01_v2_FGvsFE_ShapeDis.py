@@ -23,11 +23,8 @@ There are two direction conditions:
 
 There are three stimulus types:
     FG: classic flash-grab
-    FG_edge: flash-grab with edges only
-    BB: unfolded FG with black sector
-    WB: unfolded FG with white sector
-    FE_right: classic frame with flash on the right edge
-    FE_left: classic frame with flash on the left edge
+    GF: straightend flash-grab
+    FE: classic frame effect
 
 """
 
@@ -68,9 +65,9 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'NM01'
+subID = 'MS01'
 nrep = 10
-nstm = 6  # number of stimuli (FG, FG_edge, BB, WB, FE1, FE2)
+nstm = 5  # number of stimuli (FG, BB, WB, FE1, FE2)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 4
@@ -85,9 +82,9 @@ else:
 # create file nameTrue
 date = sfc.get_date()
 time = sfc.get_time()
-output_name = f"{subID}_task01_v3_{date}_{time}.json"
+output_name = f"{subID}_task01_v2_{date}_{time}.json"
 # set data directory
-save_path = os.path.join("..", "data", "cyc03", output_name)
+save_path = os.path.join("../..", "data", "cyc03", output_name)
 
 # --------------------------------
 # /// set stimulus parameters
@@ -160,12 +157,12 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition (contrast/direction)
-stm_array = np.repeat(['FG', 'FG_edge',
+stm_array = np.repeat(['FG',
                        'BB_leftEdge', 'WB_rightEdge',
                        'FE_leftEdge', 'FE_rightEdge'],
-                      ntrs / 6)
+                      ntrs / 5)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], int(ntrs / 12)), 6)
+dir_array = np.tile(np.repeat([-1, 1], int(ntrs / 10)), 5)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
@@ -215,19 +212,12 @@ for itrial in range(ntrs):
     # /// create visual objects
 
     # FG
-    ring_directory = os.path.join('image', 'cyc03', 'FG.png')
+    ring_directory = os.path.join('../image', 'cyc03', 'FG.png')
     ring = visual.ImageStim(win,
                             image=ring_directory,
                             size=IMAGE_SIZE,
                             opacity=1,
                             pos=(ring_x, ring_y))
-    # FG_edge
-    ring_directory = os.path.join('image', 'cyc03', 'FG_edge.png')
-    ringEdge = visual.ImageStim(win,
-                                image=ring_directory,
-                                size=IMAGE_SIZE,
-                                opacity=1,
-                                pos=(ring_x, ring_y))
 
     # Block (B)
     frame = visual.Rect(win=win,
@@ -276,8 +266,7 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// create motion arrays
 
-    if stm_array[itrial] == 'FG' or \
-            stm_array[itrial] == 'FG_edge':
+    if stm_array[itrial] == 'FG':
         motion_pos1 = 0
         motion_pos2 = dir_array[itrial] * 90
     elif (stm_array[itrial] == 'BB_leftEdge') or \
@@ -330,9 +319,6 @@ for itrial in range(ntrs):
             if stm_array[itrial] == 'FG':
                 ring.ori = imotion
                 ring.draw()
-            elif stm_array[itrial] == 'FG_edge':
-                ringEdge.ori = imotion
-                ringEdge.draw()
             elif stm_array[itrial] == 'BB_leftEdge':
                 frame.pos = imotion, frame_y
                 frame.fillColor = 'black'

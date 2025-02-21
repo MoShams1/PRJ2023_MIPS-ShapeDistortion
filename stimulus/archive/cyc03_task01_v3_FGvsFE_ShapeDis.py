@@ -21,9 +21,13 @@ There are two direction conditions:
     d = -1: leftward post-flash motion
     d = +1: rightward post-flash motion
 
-There are two motion conditions:
-    m: static
-    m: dynamic
+There are three stimulus types:
+    FG: classic flash-grab
+    FG_edge: flash-grab with edges only
+    BB: unfolded FG with black sector
+    WB: unfolded FG with white sector
+    FE_right: classic frame with flash on the right edge
+    FE_left: classic frame with flash on the left edge
 
 """
 
@@ -64,12 +68,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'PC01'
-nrep = 10  # repetition per condition (>2)
-nstm = 2  # number of stimuli (FG, FE)
+subID = 'NM01'
+nrep = 10
+nstm = 6  # number of stimuli (FG, FG_edge, BB, WB, FE1, FE2)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
-ndyn = 2  # number of dynamics (static, dynamic)
-ntrs = nrep * (8 - 2)
+ntrs = nrep * nstm * ndir
+nblocks = 4
 
 if subID == 'test':
     full_screen = False
@@ -81,9 +85,9 @@ else:
 # create file nameTrue
 date = sfc.get_date()
 time = sfc.get_time()
-output_name = f"{subID}_task01_{date}_{time}.json"
+output_name = f"{subID}_task01_v3_{date}_{time}.json"
 # set data directory
-save_path = os.path.join("..", "data", "cyc03", output_name)
+save_path = os.path.join("../..", "data", "cyc03", output_name)
 
 # --------------------------------
 # /// set stimulus parameters
@@ -149,27 +153,30 @@ gap_dur_list = range(int(REF_RATE / 2), int(REF_RATE / 1) + 1, 1)
 # initialize mouse
 mouse = event.Mouse(win=win, visible=False)
 
+# turn off Numpy's FutureWarning
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 # ----------------------------------------------------------------------------
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition (contrast/direction)
-stm_array = np.repeat(['FG', 'FE'], ntrs / 2)
+stm_array = np.repeat(['FG', 'FG_edge',
+                       'BB_leftEdge', 'WB_rightEdge',
+                       'FE_leftEdge', 'FE_rightEdge'],
+                      ntrs / 6)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], int(ntrs / 4)), 2)
+dir_array = np.tile(np.repeat([-1, 1], int(ntrs / 12)), 6)
 assert (dir_array.size == ntrs)
-dyn_array = np.tile(np.repeat(['static', 'dynamic', 'dynamic'],
-                              int(ntrs / 12)), 4)
-assert (dyn_array.size == ntrs)
 
 # randomize the order of each condition array
 ind_shuffle = np.arange(ntrs)
 np.random.shuffle(ind_shuffle)
 stm_array = stm_array[ind_shuffle]
 dir_array = dir_array[ind_shuffle]
-dyn_array = dyn_array[ind_shuffle]
 
-# turn off Numpy's FutureWarning
-warnings.simplefilter(action='ignore', category=FutureWarning)
+# pause trials
+pause_array = np.linspace(0, ntrs, nblocks + 1)
+pause_array = pause_array[:-1]
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGINS ///
@@ -203,29 +210,43 @@ for itrial in range(ntrs):
     print(f'trl: {itrial + 1}')
     print(f'stm: {stm_array[itrial]}')
     print(f'dir: {dir_array[itrial]}')
-    print(f'dyn: {dyn_array[itrial]}')
 
     # --------------------------------
     # /// create visual objects
 
     # FG
-    ring_directory = os.path.join('image', 'cyc03', 'FG.png')
+    ring_directory = os.path.join('../image', 'cyc03', 'FG.png')
     ring = visual.ImageStim(win,
                             image=ring_directory,
                             size=IMAGE_SIZE,
                             opacity=1,
                             pos=(ring_x, ring_y))
+    # FG_edge
+    ring_directory = os.path.join('../image', 'cyc03', 'FG_edge.png')
+    ringEdge = visual.ImageStim(win,
+                                image=ring_directory,
+                                size=IMAGE_SIZE,
+                                opacity=1,
+                                pos=(ring_x, ring_y))
 
-    # FE
+    # Block (B)
     frame = visual.Rect(win=win,
                         size=(frame_width, frame_height),
-                        lineWidth=10,
-                        fillColor=frame_color)
+                        lineWidth=10, )
     bg = visual.Rect(win=win,
                      size=(bg_width, bg_height),
                      lineWidth=10,
-                     fillColor=bg_color,
                      pos=(0, frame_y))
+
+    # FE
+    frame1 = visual.Rect(win=win,
+                         size=(frame_width, frame_height),
+                         lineWidth=10,
+                         fillColor='black')
+    frame2 = visual.Rect(win=win,
+                         size=(frame_width - .15, frame_height - .15),
+                         lineWidth=10,
+                         fillColor='gray')
 
     # fixation mark
     fixdot1 = visual.Circle(win,
@@ -255,11 +276,17 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// create motion arrays
 
-    if stm_array[itrial] == 'FG':
+    if stm_array[itrial] == 'FG' or \
+            stm_array[itrial] == 'FG_edge':
         motion_pos1 = 0
         motion_pos2 = dir_array[itrial] * 90
-    elif stm_array[itrial] == 'FE':
+    elif (stm_array[itrial] == 'BB_leftEdge') or \
+            (stm_array[itrial] == 'FE_leftEdge'):
         motion_pos1 = frame_width / 2
+        motion_pos2 = motion_pos1 + dir_array[itrial] * frame_width
+    elif (stm_array[itrial] == 'WB_rightEdge') or \
+            (stm_array[itrial] == 'FE_rightEdge'):
+        motion_pos1 = -frame_width / 2
         motion_pos2 = motion_pos1 + dir_array[itrial] * frame_width
     else:
         continue
@@ -278,8 +305,8 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// run the stimulus
 
-    if itrial == 0:
-        sfc.welcome_screen(win)
+    if itrial in pause_array:
+        sfc.block_msg(win, np.where(pause_array == itrial)[0][0] + 1, nblocks)
 
     # gap period
     for igap in range(iti):
@@ -300,18 +327,30 @@ for itrial in range(ntrs):
             if hline_x > hline_size / 2 - (vline_width / 2):
                 hline_x = hline_size / 2 - (vline_width / 2)
 
-            if dyn_array[itrial] == 'static':
-                ring.ori = motion_array[0]
-                frame.pos = motion_array[0], frame_y
-            else:
-                ring.ori = imotion
-                frame.pos = imotion, frame_y
-
             if stm_array[itrial] == 'FG':
+                ring.ori = imotion
                 ring.draw()
-            elif stm_array[itrial] == 'FE':
+            elif stm_array[itrial] == 'FG_edge':
+                ringEdge.ori = imotion
+                ringEdge.draw()
+            elif stm_array[itrial] == 'BB_leftEdge':
+                frame.pos = imotion, frame_y
+                frame.fillColor = 'black'
+                bg.fillColor = 'white'
                 bg.draw()
                 frame.draw()
+            elif stm_array[itrial] == 'WB_rightEdge':
+                frame.pos = imotion, frame_y
+                frame.fillColor = 'white'
+                bg.fillColor = 'black'
+                bg.draw()
+                frame.draw()
+            elif stm_array[itrial] == 'FE_leftEdge' or \
+                    stm_array[itrial] == 'FE_rightEdge':
+                frame1.pos = imotion, frame_y
+                frame2.pos = imotion, frame_y
+                frame1.draw()
+                frame2.draw()
             else:
                 continue
 
@@ -319,7 +358,7 @@ for itrial in range(ntrs):
             fixdot1.draw()
             fixdot2.draw()
 
-            if imotion == motion_pos1 and loop_cntr > 2:
+            if imotion == motion_pos1 and loop_cntr > 1:
                 hline.pos = hline_x, hline_y
                 box.draw()
                 vline.draw()
@@ -344,7 +383,6 @@ for itrial in range(ntrs):
     trial_dict = {'trial_num': itrial + 1,
                   'stimulus_type': stm_array[itrial],
                   'postflash_dir': dir_array[itrial],
-                  'stimulus_behavior': dyn_array[itrial],
                   'pse_x': [np.round(hline_x / norm_factor, 2)],
                   'loop_count': loop_cntr}
 
