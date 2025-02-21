@@ -66,11 +66,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # /// INSERT SESSION'S META DATA ///
 
 subID = 'ms-test'
-nrep = 10
+nrep = 10  # number of repetitions per condition
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
 nblocks = 2
+
 slow_factor = 2  # setup = 1, mac = 2
 
 if subID == 'test':
@@ -109,10 +110,6 @@ FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
-# donut
-# donut_radius = 3.63  # [dva]
-# donut_color = [0, 0, 0]
-
 # FE
 FE_size = 24.4  # [dva]
 FE_x = 0  # [dva]
@@ -136,12 +133,6 @@ bar_replica_h_y = 0  # [dva] rel. to fixation dot
 bar_replica_v_x = 2  # [dva] rel. to fixation dot
 bar_replica_v_y = 0  # [dva] rel. to fixation dot
 bar_replica_change_limit = .5  # [dva]
-
-# box
-box_height = 1.25
-box_width = 2
-box_color = 'green'
-box_y = 0  # rel. to horizontal bar
 
 # motion
 motion_cycle_dur_s = .8
@@ -181,18 +172,14 @@ FG_directory = os.path.join(image_path, 'FG.png')
 FG = visual.ImageStim(win,
                       image=FG_directory,
                       size=FG_size)
-# donut
-# donut = visual.Circle(win,
-#                       radius=donut_radius,
-#                       fillColor=donut_color)
 # FE
 FE_directory = os.path.join(image_path, 'FE.png')
 FE = visual.ImageStim(win,
                       image=FE_directory,
                       size=FE_size)
 # probe/replica
-bar_h_directory = os.path.join(image_path, 'bar_h.png')
-bar_v_directory = os.path.join(image_path, 'bar_v.png')
+bar_h_directory = os.path.join(image_path, 'bar_h2.png')
+bar_v_directory = os.path.join(image_path, 'bar_v2.png')
 bar_probe_h = visual.ImageStim(win,
                                image=bar_h_directory,
                                pos=(bar_probe_h_x, bar_probe_h_y),
@@ -211,16 +198,6 @@ bar_replica_v = visual.ImageStim(win,
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
                        fillColor='black')
-# box
-box_probe = visual.Rect(win,
-                        width=box_width,
-                        height=box_height,
-                        pos=(0, bar_probe_h_y + box_y),
-                        fillColor=box_color)
-box_replica = visual.Rect(win,
-                          width=box_width + .5,
-                          height=box_height,
-                          fillColor=box_color)
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///

@@ -68,13 +68,14 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # /// INSERT SESSION'S META DATA ///
 
 subID = '0001'
-nrep = 10
+nrep = 15
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * nloc * ndir
-nblocks = 6
-slow_factor = 1  # setup = 1, mac = 2
+nblocks = 9
+
+slow_factor = 2  # setup = 1, mac = 2
 
 if subID == 'test':
     full_screen = False
@@ -106,14 +107,14 @@ FIX_X = 6.5  # [dva]
 FIX_Y = 3  # [dva]
 
 # FG
-FG_size = 10  # [dva]
+FG_size = 24.4  # [dva]
 FG_x = 0  # [dva]
 FG_y = 0  # [dva]
 FG_pos1 = 0  # [degrees of arc]
 FG_pos2 = 90  # [degrees of arc]
 
 # FE
-FE_size = 10  # [dva]
+FE_size = 24.4  # [dva]
 FE_x = 0  # [dva]
 FE_y = 0  # [dva]
 FE_pos1 = -2.45  # [dva]
@@ -121,9 +122,9 @@ FE_pos2 = 2.45  # [dva]
 
 # probe
 probe1_radius = .35
-probe1_color = 'black'
-probe2_radius = .30  # [dva]
-probe2_color = 'tomato'
+probe1_color = [72, -128, -128]  # [-128 to 128] to match RGB of the T in Exp1
+probe2_radius = .20  # [dva]
+probe2_color = 'white'
 probe_y = 4.85  # [dva]
 probe_duration_frames = 3  # [frames]
 probe_nflashes = 5

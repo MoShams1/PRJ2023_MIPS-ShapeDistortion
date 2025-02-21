@@ -25,6 +25,11 @@ TWO post-flash dirctions:
 
 FIVE repetitions per stimulus
 
+-----
+To do:
+[Done] set number of repetitions
+[Done] set number of blocks
+
 """
 
 import os
@@ -66,11 +71,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 subID = 'ms-test'
 nrep = 10
-nstm = 2  # number of stimuli (FG, FE)
+nstm = 4  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
-nblocks = 2
-slow_factor = 1  # setup = 1, mac = 2
+nblocks = 4
+
+slow_factor = 2  # setup = 1, mac = 2
 
 
 if subID == 'test':
@@ -143,12 +149,6 @@ bar_replica_v_x = 2  # [dva] rel. to fixation dot
 bar_replica_v_y = 0  # [dva] rel. to fixation dot
 bar_replica_change_limit = .5  # [dva]
 
-# box
-box_height = 1.25
-box_width = 2
-box_color = 'green'
-box_y = 0  # rel. to horizontal bar
-
 # motion
 motion_cycle_dur_s = .8
 motion_cycle_dur_frames = motion_cycle_dur_s * refresh_rate
@@ -207,8 +207,8 @@ maskFE = visual.ImageStim(win,
                           image=maskFE_directory,
                           size=maskFE_size)
 # probe/replica
-bar_h_directory = os.path.join(image_path, 'bar_h.png')
-bar_v_directory = os.path.join(image_path, 'bar_v.png')
+bar_h_directory = os.path.join(image_path, 'bar_h2.png')
+bar_v_directory = os.path.join(image_path, 'bar_v2.png')
 bar_probe_h = visual.ImageStim(win,
                                image=bar_h_directory,
                                pos=(bar_probe_h_x, bar_probe_h_y),
@@ -227,16 +227,6 @@ bar_replica_v = visual.ImageStim(win,
 fixdot = visual.Circle(win,
                        radius=fixdot_radius,
                        fillColor='black')
-# box
-box_probe = visual.Rect(win,
-                        width=box_width,
-                        height=box_height,
-                        pos=(0, bar_probe_h_y + box_y),
-                        fillColor=box_color)
-box_replica = visual.Rect(win,
-                          width=box_width + .5,
-                          height=box_height,
-                          fillColor=box_color)
 
 # ----------------------------------------------------------------------------
 # /// TRIAL BEGIN ///
