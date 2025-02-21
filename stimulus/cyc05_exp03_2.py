@@ -26,8 +26,6 @@ TWO post-flash dirctions:
 
 -----
 To do:
-[Done] set number of repetitions
-[Done] set number of blocks
 
 """
 
