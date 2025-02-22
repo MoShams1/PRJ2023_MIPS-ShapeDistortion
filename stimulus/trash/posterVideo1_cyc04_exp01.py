@@ -79,8 +79,8 @@ else:
 date = sfc.get_date()
 time = sfc.get_time()
 output_file_name = f"exp01_{subID}_{date}_{time}.json"
-save_path = os.path.join("..", "data", "cyc04", output_file_name)
-image_path = os.path.join("image", "cyc04")
+save_path = os.path.join("../..", "data", "cyc04", output_file_name)
+image_path = os.path.join("../image", "cyc04")
 
 # --------------------------------
 # /// set stimulus parameters
