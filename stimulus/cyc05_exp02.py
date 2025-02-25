@@ -67,7 +67,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0005'
+subID = '0007'
 nrep = 15
 nstm = 2  # number of stimuli (FG, FE)
 nloc = 3  # number of probe locations
