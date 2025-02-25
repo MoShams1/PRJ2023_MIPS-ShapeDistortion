@@ -63,7 +63,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0001'
+subID = '0004-test'
 nrep = 10  # number of repetitions per condition
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
@@ -176,8 +176,8 @@ FE = visual.ImageStim(win,
                       image=FE_directory,
                       size=FE_size)
 # probe/replica
-bar_h_directory = os.path.join(image_path, 'bar_h2.png')
-bar_v_directory = os.path.join(image_path, 'bar_v2.png')
+bar_h_directory = os.path.join(image_path, 'bar_h.png')
+bar_v_directory = os.path.join(image_path, 'bar_v.png')
 bar_probe_h = visual.ImageStim(win,
                                image=bar_h_directory,
                                pos=(bar_probe_h_x, bar_probe_h_y),

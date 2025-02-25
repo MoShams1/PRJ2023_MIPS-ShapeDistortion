@@ -66,7 +66,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = 'ms-test'
+subID = '0004'
 nrep = 10
 nstm = 5  # number of stimuli
 ndir = 2  # number of direction of motions (flash-left, flash-right)
