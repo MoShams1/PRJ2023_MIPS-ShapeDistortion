@@ -2,7 +2,7 @@ clc
 clear
 close all
 
-all_files = dir('../../data/cyc05/*exp01*');
+all_files = dir('../../data/cyc05/archive/*exp01*');
 nsubjects = numel(all_files);
 
 for isubj = 1:nsubjects

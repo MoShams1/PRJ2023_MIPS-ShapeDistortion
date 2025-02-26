@@ -3,9 +3,9 @@ clear
 close all
 
 
-all_files = dir('../../data/cyc05/*exp01*');
+all_files = dir('../../data/cyc05/*exp03*');
 
-isubj = 3;
+isubj = 2;
 
 jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...
@@ -29,29 +29,36 @@ pse_norm = cell2mat(struct2cell(jsonData.pse_normalized));
 loop_cnt = cell2mat(struct2cell(jsonData.loop_count));
 
 pse_norm(dir>0) = -pse_norm(dir>0);
-distortion_observed_FG  = pse_norm(strcmp(typ, 'FG'));
-distortion_observed_FE  = pse_norm(strcmp(typ, 'FE'));
+distortion_observed_frame  = pse_norm(strcmp(typ, 'frame'));
+distortion_observed_frame_disc  = pse_norm(strcmp(typ, 'frame_disc'));
+distortion_observed_frame_frame  = pse_norm(strcmp(typ, 'frame_frame'));
+distortion_observed_cross_disc  = pse_norm(strcmp(typ, 'cross_disc'));
+distortion_observed_cross_frame  = pse_norm(strcmp(typ, 'cross_frame'));
 
 %% plot scatter
 
 figure
 
-data_mat = [distortion_observed_FG, distortion_observed_FE];
+data_mat = [
+    distortion_observed_cross_disc,...
+    distortion_observed_cross_frame,...
+    distortion_observed_frame_disc,...
+    distortion_observed_frame_frame,...
+    distortion_observed_frame];
 % scatterbar_median(data_mat);
-% errorbar(1:2, median(data_mat), MAD(data_mat), ...
+% errorbar(1:5, median(data_mat), MAD(data_mat), ...
 %     'o','color','k','linewidth',2,'marker','none')
-
 scatterbar(data_mat);
-errorbar(1:2, mean(data_mat), SE(data_mat), ...
+errorbar(1:5, mean(data_mat), SE(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
 
-xticks(1:2)
-xticklabels({'FG', 'FE'})
+xticks(1:5)
+xticklabels({'cd', 'cf', 'fd', 'ff', 'f'})
 
 ylabel 'Distortion'
 yline(0,'-')
 
-pbaspect([1,2,1])
+% pbaspect([1,2,1])
 
 cleanplot
 

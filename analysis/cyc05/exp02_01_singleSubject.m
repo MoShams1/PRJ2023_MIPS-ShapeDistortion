@@ -11,7 +11,6 @@ jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...
         all_files(isubj).name);
 
-
 % Open the JSON file and read its content
 fileID = fopen(jsonFilePath);
 jsonContent = fread(fileID, '*char')';
@@ -100,10 +99,10 @@ frontDotY_FE = click_err_y_FE(:,3) + probeOffset_y;
 [~,sig3_FE] = ranksum(backDotX_FE, frontDotX_FE);
 
 figure
-scatterbar_median([backDotX_FG,centerDotX_FG,frontDotX_FG])
+scatterbar_median([backDotX_FG,centerDotX_FG,frontDotX_FG]);
 
 figure
-scatterbar_median([backDotX_FE,centerDotX_FE,frontDotX_FE])
+scatterbar_median([backDotX_FE,centerDotX_FE,frontDotX_FE]);
 
 %% 2D plot of the click positions
 
