@@ -66,7 +66,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0007'
+subID = '0004'
 nrep = 10
 nstm = 5  # number of stimuli
 ndir = 2  # number of direction of motions (flash-left, flash-right)
@@ -205,8 +205,8 @@ maskFE = visual.ImageStim(win,
                           image=maskFE_directory,
                           size=maskFE_size)
 # probe/replica
-bar_h_directory = os.path.join(image_path, 'bar_h2.png')
-bar_v_directory = os.path.join(image_path, 'bar_v2.png')
+bar_h_directory = os.path.join(image_path, 'bar_h.png')
+bar_v_directory = os.path.join(image_path, 'bar_v.png')
 bar_probe_h = visual.ImageStim(win,
                                image=bar_h_directory,
                                pos=(bar_probe_h_x, bar_probe_h_y),

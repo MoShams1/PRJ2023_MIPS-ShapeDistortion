@@ -11,6 +11,7 @@ Task Procedure:
     A symmetric T shape stimulus flashes at one of the reversals
     Subject replicate their perceived shape by adjusting the horizontal
     component of a similar T shape.
+    The fixation dot changes across multiple locations to enforce illusion
 
 ----------
 TWO stimuli:
@@ -63,12 +64,12 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # ----------------------------------------------------------------------------
 # /// INSERT SESSION'S META DATA ///
 
-subID = '0004'
-nrep = 10  # number of repetitions per condition
+subID = '0004-test'
+nrep = 5  # number of repetitions per condition
 nstm = 2  # number of stimuli (FG, FE)
 ndir = 2  # number of direction of motions (flash-left, flash-right)
 ntrs = nrep * nstm * ndir
-nblocks = 2
+nblocks = 1
 
 slow_factor = 1  # setup = 1, mac = 2
 
@@ -83,7 +84,7 @@ else:
 # file names and directory paths
 date = sfc.get_date()
 time = sfc.get_time()
-output_file_name = f"exp01_{subID}_{date}_{time}.json"
+output_file_name = f"exp00_{subID}_{date}_{time}.json"
 save_path = os.path.join("..", "data", "cyc05", output_file_name)
 image_path = os.path.join("image", "cyc05")
 
@@ -147,9 +148,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # /// CONDITIONS ///
 
 # create an equal number of trials per condition
-stm_array = np.repeat(['FG', 'FE'], 20)
+stm_array = np.repeat(['FG', 'FE'], 10)
 assert (stm_array.size == ntrs)
-dir_array = np.tile(np.repeat([-1, 1], 10), 2)
+dir_array = np.tile(np.repeat([-1, 1], 5), 2)
 assert (dir_array.size == ntrs)
 
 # randomize the order of each condition array
@@ -216,7 +217,8 @@ for itrial in range(ntrs):
     # --------------------------------
     # /// set up the stimulus behavior in current trial
     fixdot_y_offset = np.random.choice(np.arange(-1, 1, .1))
-    fixdot.pos = (FIX_X, FIX_Y + fixdot_y_offset)
+    fixdot_side = random.choice([-1, 1])
+    fixdot.pos = (FIX_X * fixdot_side, FIX_Y + fixdot_y_offset)
 
     # add random offset to horizontal bar's onset position
     bar_replica_h_x_offset = \
@@ -296,9 +298,11 @@ for itrial in range(ntrs):
                     bar_probe_h.draw()
 
                 # draw replica
-                bar_replica_v.pos = (bar_replica_v_x + fixdot.pos[0],
+                bar_replica_v.pos = (bar_replica_v_x * fixdot_side +
+                                     fixdot.pos[0],
                                      bar_replica_v_y + fixdot.pos[1])
-                bar_replica_h.pos = (bar_replica_h_x + fixdot.pos[0] +
+                bar_replica_h.pos = (bar_replica_h_x * fixdot_side +
+                                     fixdot.pos[0] +
                                      bar_replica_change,
                                      bar_replica_h_y + fixdot.pos[1])
                 bar_replica_v.draw()
@@ -323,6 +327,7 @@ for itrial in range(ntrs):
 
     # create a dictionary of variables to be saved
     trial_dict = {'trial_number': itrial + 1,
+                  'fixdot_side': fixdot_side,
                   'stimulus_type': stm_array[itrial],
                   'postflash_direction': dir_array[itrial],
                   'pse_dva': np.round(bar_replica_change, 2),
