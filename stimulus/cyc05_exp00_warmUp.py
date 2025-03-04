@@ -120,7 +120,7 @@ FE_pos2 = 2.45  # [dva]
 bar_size = 1.5  # [dva]
 
 # probe
-bar_probe_h_x = 0  # [dva]
+bar_probe_h_x_base = [-.5, 0, .5]  # [dva]
 bar_probe_h_y = 4.3  # [dva]
 bar_probe_v_x = 0  # [dva]
 bar_probe_v_y = 4.3  # [dva]
@@ -181,7 +181,6 @@ bar_h_directory = os.path.join(image_path, 'bar_h.png')
 bar_v_directory = os.path.join(image_path, 'bar_v.png')
 bar_probe_h = visual.ImageStim(win,
                                image=bar_h_directory,
-                               pos=(bar_probe_h_x, bar_probe_h_y),
                                size=bar_size)
 bar_probe_v = visual.ImageStim(win,
                                image=bar_v_directory,
@@ -225,6 +224,9 @@ for itrial in range(ntrs):
         np.random.choice(np.arange(-bar_replica_change_limit,
                                    bar_replica_change_limit,
                                    0.1))
+
+    bar_probe_h_x = random.choice(bar_probe_h_x_base)
+    bar_probe_h.pos = bar_probe_h_x, bar_probe_h_y
 
     # --------------------------------
     # create motion arrays
