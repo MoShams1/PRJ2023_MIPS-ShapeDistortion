@@ -34,6 +34,12 @@ for isubj = 1:nsubjects
 
 end
 
+%%
+% ind_exclude = [5];
+% distortion_observed_FG(ind_exclude) = [];
+% distortion_observed_FE(ind_exclude) = [];
+% nsubjects_after_exclusion = numel(distortion_observed_FG);
+
 %% save distortion magnitudes of each individual in FG and FE
 
 save distortion_observed.mat ...

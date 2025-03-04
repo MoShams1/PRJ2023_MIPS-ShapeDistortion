@@ -5,7 +5,7 @@ close all
 
 all_files = dir('../../data/cyc05/*exp01*');
 
-isubj = 4;
+isubj = 8;
 
 jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...
@@ -37,13 +37,13 @@ distortion_observed_FE  = pse_norm(strcmp(typ, 'FE'));
 figure
 
 data_mat = [distortion_observed_FG, distortion_observed_FE];
-% scatterbar_median(data_mat);
-% errorbar(1:2, median(data_mat), MAD(data_mat), ...
-%     'o','color','k','linewidth',2,'marker','none')
-
-scatterbar(data_mat);
-errorbar(1:2, mean(data_mat), SE(data_mat), ...
+scatterbar_median(data_mat);
+errorbar(1:2, median(data_mat), MAD(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
+
+% scatterbar(data_mat);
+% errorbar(1:2, mean(data_mat), SE(data_mat), ...
+%     'o','color','k','linewidth',2,'marker','none')
 
 xticks(1:2)
 xticklabels({'FG', 'FE'})

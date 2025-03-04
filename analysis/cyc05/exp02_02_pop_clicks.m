@@ -61,7 +61,11 @@ for isubj = 1:numel(all_files)
 
 end
 
-
+%%
+% ind_exclude = [5];
+% distortion_observed_FG(ind_exclude) = [];
+% distortion_observed_FE(ind_exclude) = [];
+% nsubjects_after_exclusion = numel(distortion_observed_FG);
 
 %% retrieve actual click locations
 
