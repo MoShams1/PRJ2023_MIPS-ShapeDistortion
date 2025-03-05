@@ -17,6 +17,8 @@ rightHand_FE = abs(frontDotX_FE - centerDotX_FE);
 distortion_expected_FG = (leftHand_FG-rightHand_FG) ./ hBarLength_FG;
 distortion_expected_FE = (leftHand_FE-rightHand_FE) ./ hBarLength_FE;
 
+nsubjects = numel(distortion_expected_FG);
+
 figure('units','inches','outerposition',[1 1 3.5 8])
 
 %% click location order check
@@ -62,7 +64,7 @@ yline(0)
 
 text(.05, .9, ['N = ',num2str(numel(distortion_expected_FG))])
 
-title ''
+title 'FG'
 legend off
 cleanplot
 
@@ -95,7 +97,7 @@ yline(0)
 
 text(.05, .9, ['N = ',num2str(numel(distortion_expected_FE))])
 
-title ''
+title 'FE'
 legend off
 cleanplot
 
@@ -107,6 +109,46 @@ fprintf([ ...
     median(distortion_expected_FE))
 
 cleanplot
+
+
+%% plot observed-inferred distortion
+
+figure('units','inches','outerposition',[0 0 4 4])
+
+FG_diff = distortion_observed_FG - distortion_expected_FG;
+FE_diff = distortion_observed_FE - distortion_expected_FE;
+data_mat = [FG_diff, FE_diff];
+
+xs = scatterbar_median(data_mat);
+errorbar(1:2, median(data_mat), MAD(data_mat), ...
+    'o','color','k','linewidth',2,'marker','none')
+
+plot(xs', data_mat', 'color', .5 * ones(1,3))
+
+xticks(1:2)
+xticklabels({'FG', 'FE'})
+
+ylabel({'Distortion'; '(observed - inferred)'})
+yline(0,'-')
+% ylim([-.2 1])
+
+text(2.3, -1.4, ['N = ',num2str(nsubjects)])
+pbaspect([1,2,1])
+
+cleanplot
+
+%%
+[delta, ~, p, W, z, r] = signrank_full(FG_diff, FE_diff);
+fprintf([ ...
+    '\n <Distortion difference>' ...
+    '\n -----------------------' ...
+    '\n median difference = %4.1f'...
+    '\n W = %5.2f' ...
+    '\n z = %5.2f' ...
+    '\n p = %5.3f' ...
+    '\n r = %4.2f \n'], ...
+delta,W,z,p,r)
+statbar(1,2, 1, p);
 
 %% save figure
 % set(gcf,'papersize',[8.3 11.7])

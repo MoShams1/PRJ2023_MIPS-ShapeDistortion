@@ -5,7 +5,7 @@ close all
 
 all_files = dir('../../data/cyc05/*exp02*');
 
-isubj = 7;
+isubj = 10;
 
 jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...

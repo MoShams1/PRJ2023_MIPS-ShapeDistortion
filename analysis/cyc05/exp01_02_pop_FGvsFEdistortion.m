@@ -63,6 +63,7 @@ xticklabels({'FG', 'FE'})
 
 ylabel 'Distortion'
 yline(0,'-')
+ylim([-.2 1])
 
 text(2.2, -.15, ['N = ',num2str(nsubjects)])
 pbaspect([1,2,1])

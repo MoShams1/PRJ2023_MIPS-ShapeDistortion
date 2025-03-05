@@ -8,7 +8,7 @@ ylength = ylimits(2)-ylimits(1);
 lw = 1;
 whisker_length = .01 * ylength;
 fontsz = 18;
-text_offset = .01 * ylength;
+text_offset = .015 * ylength;
 
 if p <= .001
     text_message = '***';
