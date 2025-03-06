@@ -3,11 +3,10 @@ clear
 close all
 
 all_files = dir('../../data/cyc05/*exp01*');
-nsubjects = numel(all_files);
 
 ind_exclude = 5;
 
-for isubj = 1:nsubjects
+for isubj = 1:numel(all_files)
 
     jsonFilePath = fullfile( ...
         all_files(isubj).folder, ...

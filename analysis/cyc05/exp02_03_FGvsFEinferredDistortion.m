@@ -16,6 +16,11 @@ rightHand_FE = frontDotX_FE - centerDotX_FE;
 distortion_expected_FG = (leftHand_FG-rightHand_FG) ./ hBarLength_FG;
 distortion_expected_FE = (leftHand_FE-rightHand_FE) ./ hBarLength_FE;
 
+distortion_expected_FG_pop = (median(leftHand_FG)-median(rightHand_FG)) ./ ...
+    median(hBarLength_FG);
+distortion_expected_FE_pop = (median(leftHand_FE)-median(rightHand_FE)) ./ ...
+    median(hBarLength_FE);
+
 nsubjects = length(distortion_expected_FG);
 
 %% plot bar: FG distortion vs. FE distortion
@@ -50,15 +55,21 @@ cleanplot
 figure('units','inches','outerposition',[0 0 4 4])
 hold on
 
+clines = lines(7);
+
 szMarker = 100;
-alphaMarker = .4;
+alphaMarker = .5;
 c = 'k';
+c_median = clines(7,:);
 ticks = -2:.5:3;
-lims = [-1 2];
+lims = [-1 2.2];
 
 scatter(distortion_expected_FG, distortion_expected_FE, ...
       szMarker, c, 'fill', ...
       'markerfacealpha',alphaMarker);
+
+scatter(distortion_expected_FG_pop, distortion_expected_FE_pop, ...
+      szMarker*1.5, c_median, 'x');
 
 title 'Inferred distortion'
 

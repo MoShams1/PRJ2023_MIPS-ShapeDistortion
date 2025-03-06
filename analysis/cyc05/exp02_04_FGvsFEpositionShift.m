@@ -7,47 +7,31 @@ load click_positions.mat
 hBarCenter_FG = mean([backDotX_FG,centerDotX_FG,frontDotX_FG], 2);
 hBarCenter_FE = mean([backDotX_FE,centerDotX_FE,frontDotX_FE], 2);
 
+hBarCenter_FG_pop = mean(mean([backDotX_FG,centerDotX_FG,frontDotX_FG], 1));
+hBarCenter_FE_pop = mean(mean([backDotX_FE,centerDotX_FE,frontDotX_FE], 1));
+
 nsubjects = length(hBarCenter_FG);
 
 %% plot scatter + model
 
-% mdl = fitlm(hBarCenter_FG, hBarCenter_FE);
-
-% fprintf([ ...
-%     '<Fit parameters> \n' ...
-%     '---------------- \n' ...
-%     'y = %4.2fx + (%4.2f) \n' ...
-%     'adjR2: %4.2f \n'], ...
-%     mdl.Coefficients.Estimate(2), ...
-%     mdl.Coefficients.Estimate(1), ...
-%     mdl.Rsquared.Adjusted)
-
-% disp(mdl)
-
 figure('units','inches','outerposition',[0 0 4 4])
 hold on
 
+clines = lines(7);
+
 szMarker = 100;
-alphaMarker = .4;
+alphaMarker = .5;
 c = 'k';
+c_median = clines(7,:);
 ticks = 0:.5:10;
 lims = [-0.2 2];
 
 scatter(hBarCenter_FG, hBarCenter_FE, ...
     szMarker, c, 'fill', ...
     'markerfacealpha',alphaMarker)
-% h = plot(mdl);
 
-% hData = findobj(h,'DisplayName','Data');
-% hFit = findobj(h,'DisplayName','Fit');
-% hBound = findobj(h,'DisplayName','Confidence bounds');
-% hBound = findobj(h,'LineStyle',hBound.LineStyle, 'Color', hBound.Color);
-% 
-% set(hFit,'color',c,'linewidth',lwFit)
-% set(hBound,'color',c,'linestyle',':','linewidth',lwBound)
-
-% hData.MarkerFaceColor = 'none';
-% hData.MarkerEdgeColor = 'none';
+scatter(hBarCenter_FG_pop, hBarCenter_FE_pop, ...
+      szMarker*1.5, c_median, 'x');
 
 title 'Position shift (dva)'
 
