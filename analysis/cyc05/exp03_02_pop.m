@@ -6,6 +6,8 @@ close all
 all_files = dir('../../data/cyc05/*exp03*');
 nsubjects = numel(all_files);
 
+ind_exclude = 5;
+
 for isubj = 1:nsubjects
 
     jsonFilePath = fullfile( ...
@@ -37,6 +39,13 @@ for isubj = 1:nsubjects
     distortion_observed_cross_frame(isubj,1)  = mean(pse_norm(strcmp(typ, 'cross_frame')));
 
 end
+
+%% apply exclusion
+distortion_observed_frame(ind_exclude,:) = [];
+distortion_observed_frame_disc(ind_exclude,:) = [];
+distortion_observed_frame_frame(ind_exclude,:) = [];
+distortion_observed_cross_disc(ind_exclude,:) = [];
+distortion_observed_cross_frame(ind_exclude,:) = [];
 
 %% plot scatter
 

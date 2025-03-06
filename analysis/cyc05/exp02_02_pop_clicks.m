@@ -4,6 +4,8 @@ close all
 
 all_files = dir('../../data/cyc05/*exp02*');
 
+ind_exclude = 5;
+
 for isubj = 1:numel(all_files)
 
     jsonFilePath = fullfile( ...
@@ -61,11 +63,12 @@ for isubj = 1:numel(all_files)
 
 end
 
-%%
-% ind_exclude = [5];
-% distortion_observed_FG(ind_exclude) = [];
-% distortion_observed_FE(ind_exclude) = [];
-% nsubjects_after_exclusion = numel(distortion_observed_FG);
+%% apply exclusion
+click_err_x_FG(ind_exclude,:) = [];
+click_err_x_FE(ind_exclude,:) = [];
+click_err_y_FG(ind_exclude,:) = [];
+click_err_y_FE(ind_exclude,:) = [];
+nsubjects = size(click_err_x_FG,1);
 
 %% retrieve actual click locations
 
@@ -208,7 +211,7 @@ ylabel 'Vertical position (dva)'
 axis(axis_limits)
 axis square
 
-text(1.75, 2, ['N = ',num2str(numel(all_files))])
+text(1.75, 2, ['N = ',num2str(nsubjects)])
 
 cleanplot
 

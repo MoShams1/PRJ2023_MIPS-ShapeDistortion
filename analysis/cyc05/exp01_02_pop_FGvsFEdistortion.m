@@ -5,6 +5,8 @@ close all
 all_files = dir('../../data/cyc05/*exp01*');
 nsubjects = numel(all_files);
 
+ind_exclude = 5;
+
 for isubj = 1:nsubjects
 
     jsonFilePath = fullfile( ...
@@ -34,11 +36,10 @@ for isubj = 1:nsubjects
 
 end
 
-%%
-% ind_exclude = [5];
-% distortion_observed_FG(ind_exclude) = [];
-% distortion_observed_FE(ind_exclude) = [];
-% nsubjects_after_exclusion = numel(distortion_observed_FG);
+%% apply exclusion
+distortion_observed_FG(ind_exclude) = [];
+distortion_observed_FE(ind_exclude) = [];
+nsubjects = numel(distortion_observed_FG);
 
 %% save distortion magnitudes of each individual in FG and FE
 
@@ -46,7 +47,7 @@ save distortion_observed.mat ...
     distortion_observed_FG ...
     distortion_observed_FE
 
-%% plot scatter: FG distortion vs. FE distortion
+%% plot bar: FG distortion vs. FE distortion
 
 figure('units','inches','outerposition',[0 0 4 4])
 hold on
@@ -87,6 +88,39 @@ delta,W,z,p,r)
 statbar(1,2, .9, p);
 
 
+%% plot scatter: FG distortion vs. FE distortion
+
+figure('units','inches','outerposition',[0 0 4 4])
+hold on
+
+szMarker = 100;
+alphaMarker = .4;
+c = 'k';
+ticks = -1:.25:1;
+lims = [-.2 1];
+
+scatter(distortion_observed_FG, distortion_observed_FE, ...
+      szMarker, c, 'fill', ...
+      'markerfacealpha',alphaMarker);
+
+title 'Distortion'
+
+xlabel 'Flash-Grab'
+xline(0,'-')
+xticks(ticks)
+xlim(lims)
+
+ylabel 'Frame'
+yline(0,'-')
+yticks(ticks)
+ylim(lims)
+
+text(.05, .9, ['N = ',num2str(nsubjects)])
+
+axis square
+addUnityLine
+
+cleanplot
 
 %% save figure
 % set(gcf,'papersize',[8.3 11.7])

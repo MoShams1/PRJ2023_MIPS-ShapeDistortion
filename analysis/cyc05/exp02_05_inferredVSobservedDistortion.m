@@ -5,14 +5,14 @@ close all
 load distortion_observed.mat
 load click_positions.mat
 
-hBarLength_FG = abs(frontDotX_FG - backDotX_FG);
-hBarLength_FE = abs(frontDotX_FE - backDotX_FE);
+hBarLength_FG = frontDotX_FG - backDotX_FG;
+hBarLength_FE = frontDotX_FE - backDotX_FE;
 
-leftHand_FG = abs(centerDotX_FG - backDotX_FG);
-leftHand_FE = abs(centerDotX_FE - backDotX_FE);
+leftHand_FG = centerDotX_FG - backDotX_FG;
+leftHand_FE = centerDotX_FE - backDotX_FE;
 
-rightHand_FG = abs(frontDotX_FG - centerDotX_FG);
-rightHand_FE = abs(frontDotX_FE - centerDotX_FE);
+rightHand_FG = frontDotX_FG - centerDotX_FG;
+rightHand_FE = frontDotX_FE - centerDotX_FE;
 
 distortion_expected_FG = (leftHand_FG-rightHand_FG) ./ hBarLength_FG;
 distortion_expected_FE = (leftHand_FE-rightHand_FE) ./ hBarLength_FE;
@@ -20,6 +20,12 @@ distortion_expected_FE = (leftHand_FE-rightHand_FE) ./ hBarLength_FE;
 nsubjects = numel(distortion_expected_FG);
 
 figure('units','inches','outerposition',[1 1 3.5 8])
+
+%% apply exclusion
+% distortion_observed_FG(ind_exclude) = [];
+% distortion_observed_FE(ind_exclude) = [];
+% distortion_expected_FG(ind_exclude) = [];
+% distortion_expected_FE(ind_exclude) = [];
 
 %% click location order check
 ind_FG = (frontDotX_FG > centerDotX_FG) > backDotX_FG;
@@ -42,30 +48,33 @@ ind_FE = (frontDotX_FE > centerDotX_FE) > backDotX_FE;
 subplot(2,1,1)
 
 szMarker = 100;
-alphaMarker = .2;
+alphaMarker = .4;
 c = 'k';
-ticks = -1:.25:1;
+ticks = -1:.5:2;
+lims = [-.75 1];
 
 hold on
 scatter(distortion_expected_FG, distortion_observed_FG, ...
     szMarker, c, 'fill', ...
     'markerfacealpha',alphaMarker)
 
-axis([-1 1 -1 1])
+title 'Flash-Grab'
+
+xlabel 'Inferred distortion'
+xline(0,'-')
+xticks(ticks)
+xlim(lims)
+
+ylabel 'Observed distortion'
+yline(0,'-')
+yticks(ticks)
+ylim(lims)
+
+text(1.5, -.75, ['N = ',num2str(nsubjects)])
+
+axis square
 addUnityLine
 
-xticks(ticks)
-xlabel 'Inferred distortion'
-xline(0)
-
-yticks(ticks)
-ylabel 'Observed distortion'
-yline(0)
-
-text(.05, .9, ['N = ',num2str(numel(distortion_expected_FG))])
-
-title 'FG'
-legend off
 cleanplot
 
 fprintf([ ...
@@ -75,8 +84,6 @@ fprintf([ ...
     median(distortion_observed_FG), ...
     median(distortion_expected_FG))
 
-cleanplot
-
 %% plot scatter (FE)
 subplot(2,1,2)
 
@@ -84,21 +91,23 @@ scatter(distortion_expected_FE, distortion_observed_FE, ...
     szMarker, c, 'fill', ...
     'markerfacealpha',alphaMarker)
 
-axis([-1 1 -1 1])
+title 'Frame'
+
+xlabel 'Inferred distortion'
+xline(0,'-')
+xticks(ticks)
+xlim(lims)
+
+ylabel 'Observed distortion'
+yline(0,'-')
+yticks(ticks)
+ylim(lims)
+
+text(1.5, -.75, ['N = ',num2str(nsubjects)])
+
+axis square
 addUnityLine
 
-xticks(ticks)
-xlabel 'Inferred distortion'
-xline(0)
-
-yticks(ticks)
-ylabel 'Observed distortion'
-yline(0)
-
-text(.05, .9, ['N = ',num2str(numel(distortion_expected_FE))])
-
-title 'FE'
-legend off
 cleanplot
 
 fprintf([ ...
@@ -108,15 +117,48 @@ fprintf([ ...
     median(distortion_observed_FE), ...
     median(distortion_expected_FE))
 
-cleanplot
 
+%% plot scatter observed-inferred distortion
+
+figure('units','inches','outerposition',[0 0 4 4])
+hold on
+
+FG_diff = distortion_observed_FG - distortion_expected_FG;
+FE_diff = distortion_observed_FE - distortion_expected_FE;
+
+szMarker = 100;
+alphaMarker = .4;
+c = 'k';
+ticks = -2:.5:2;
+lims = [-1 1];
+
+scatter(FG_diff, FE_diff, ...
+    szMarker, c, 'fill', ...
+    'markerfacealpha',alphaMarker)
+
+title 'Distortion difference (Observed - Inferred)'
+
+xlabel 'Flash-Grab'
+xline(0,'-')
+xticks(ticks)
+xlim(lims)
+
+ylabel 'Frame'
+yline(0,'-')
+yticks(ticks)
+ylim(lims)
+
+text(1.5, -.75, ['N = ',num2str(nsubjects)])
+
+axis square
+addUnityLine
+
+cleanplot
 
 %% plot observed-inferred distortion
 
 figure('units','inches','outerposition',[0 0 4 4])
 
-FG_diff = distortion_observed_FG - distortion_expected_FG;
-FE_diff = distortion_observed_FE - distortion_expected_FE;
 data_mat = [FG_diff, FE_diff];
 
 xs = scatterbar_median(data_mat);
