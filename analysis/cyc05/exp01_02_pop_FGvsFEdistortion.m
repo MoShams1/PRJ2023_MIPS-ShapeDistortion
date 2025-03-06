@@ -55,6 +55,9 @@ data_mat = [distortion_observed_FG, distortion_observed_FE];
 xs = scatterbar_median(data_mat);
 errorbar(1:2, median(data_mat), MAD(data_mat), ...
     'o','color','k','linewidth',2,'marker','none')
+% xs = scatterbar(data_mat);
+% errorbar(1:2, mean(data_mat), SE(data_mat), ...
+%     'o','color','k','linewidth',2,'marker','none')
 
 plot(xs', data_mat', 'color', .5 * ones(1,3))
 
