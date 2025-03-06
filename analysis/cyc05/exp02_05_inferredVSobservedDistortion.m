@@ -117,6 +117,7 @@ figure('units','inches','outerposition',[0 0 4 4])
 
 FG_diff = distortion_observed_FG - distortion_expected_FG;
 FE_diff = distortion_observed_FE - distortion_expected_FE;
+
 data_mat = [FG_diff, FE_diff];
 
 xs = scatterbar_median(data_mat);
