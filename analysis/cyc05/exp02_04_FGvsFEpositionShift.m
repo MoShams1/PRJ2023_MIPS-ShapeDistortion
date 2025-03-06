@@ -1,5 +1,6 @@
 clc
 clear
+close all
 
 load click_positions.mat
 

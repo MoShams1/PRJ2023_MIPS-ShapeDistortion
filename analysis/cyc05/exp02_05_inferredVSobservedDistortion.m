@@ -51,7 +51,7 @@ szMarker = 100;
 alphaMarker = .4;
 c = 'k';
 ticks = -1:.5:2;
-lims = [-.75 1];
+lims = [-.6 2.2];
 
 hold on
 scatter(distortion_expected_FG, distortion_observed_FG, ...
@@ -70,7 +70,7 @@ yline(0,'-')
 yticks(ticks)
 ylim(lims)
 
-text(1.5, -.75, ['N = ',num2str(nsubjects)])
+text(1.5, -.45, ['N = ',num2str(nsubjects)])
 
 axis square
 addUnityLine
@@ -103,7 +103,7 @@ yline(0,'-')
 yticks(ticks)
 ylim(lims)
 
-text(1.5, -.75, ['N = ',num2str(nsubjects)])
+text(1.5, -.45, ['N = ',num2str(nsubjects)])
 
 axis square
 addUnityLine
