@@ -10,8 +10,9 @@ function xs = scatterbar_median(A, ...
 
 A = mat2cell(A, size(A,1), ones(1, size(A,2)));
 
-if nargin == 1
-    nCat = numel(A); % number of categories
+nCat = numel(A); % number of categories
+
+if nargin == 1    
     szMedianLine = .4; % line length for mean
     lwMedianLine = 4;
     szMarker = 70; % marker size
