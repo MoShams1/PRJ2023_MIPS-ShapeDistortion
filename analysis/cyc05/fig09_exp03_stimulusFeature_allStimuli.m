@@ -88,8 +88,8 @@ cleanplot
 round(median(data_mat)*100)/100
 
 %% save figure
-set(gcf,'papersize',[8.3 11.7])
-saveas(gcf,'../../results/fig09.pdf')
+% set(gcf,'papersize',[8.3 11.7])
+% saveas(gcf,'../../results/fig09.pdf')
 
 %%
 [p, tbl, stats] = friedman(data_mat, 1);
@@ -126,6 +126,9 @@ saveas(gcf,'../../results/fig09.pdf')
 % 
 % p45 = signrank(data_mat(:,4),data_mat(:,5));
 % statbar(4,5,.64,p45)
+
+p25 = signrank(data_mat(:,2),data_mat(:,5));
+p45 = signrank(data_mat(:,4),data_mat(:,5));
 
 
 
